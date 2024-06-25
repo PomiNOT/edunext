@@ -2,10 +2,8 @@ import { Form, Input, Button, Select } from 'antd';
 import { UserOutlined, LockOutlined } from '@ant-design/icons';
 import { useContext } from 'react';
 import { UserContext } from '../context/UserContextComponent';
-import { useNavigate } from 'react-router-dom';
 
 function LoginForm() {
-  const navigate = useNavigate();
   const { login, user } = useContext(UserContext);
 
   switch (user?.role) {
