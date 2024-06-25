@@ -1,14 +1,38 @@
 import { Form, Input, Button, Select } from 'antd';
 import { UserOutlined, LockOutlined } from '@ant-design/icons';
+import { useContext } from 'react';
+import { UserContext } from '../context/UserContextComponent';
+import { useNavigate } from 'react-router-dom';
 
 function LoginForm() {
-  const onFinish = (values) => {
-    console.log('Received values of form: ', values);
+  const navigate = useNavigate();
+  const { login, user } = useContext(UserContext);
+
+  switch (user?.role) {
+    case 'admin':
+      return <Navigate to='/admin' />;
+    case 'teacher':
+      return <Navigate to='/teacher' />;
+    case 'student':
+      return <Navigate to='/student' />;
+  }
+
+  const onFinish = async ({ username, password }) => {
+    try {
+      const user = await login(username, password);
+      if (!user) {
+        alert('Login failed');
+      }
+    } catch (err) {
+      console.log(err);
+    }
   };
 
   return (
     <div className='w-3/4'>
-      <h1 className='font-bold text-center mb-3 text-2xl'>Login</h1>
+      <div className='text-center'>
+        <h1 className='font-bold mb-3 text-2xl'>Login</h1>
+      </div>
       <Form
         onFinish={onFinish}
         initialValues={{ campus: 'hn' }}
