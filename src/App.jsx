@@ -1,3 +1,5 @@
-function App() {
-  return <h1>Shit</h1>;
+import Login from './pages/LoginPage';
+
+export default function App() {
+  return <Login />;
 }
