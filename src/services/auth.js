@@ -1,29 +1,21 @@
 import { client } from './client';
+import { DomainError } from './errors';
 
 export class User {
   #role;
   #password;
-
-  constructor(username, password, role) {
-    this.role = role;
-    this.username = username;
-    this.password = password;
-  }
+  username;
 
   get role() {
     return this.#role;
   }
 
   set role(role) {
-    if (!['admin', 'teacher', 'user'].includes(role)) {
-      throw new Error('User role must be admin, teacher or user');
+    if (!['admin', 'teacher', 'student'].includes(role)) {
+      throw new Error('User role must be admin, teacher or student');
     }
 
     this.#role = role;
-  }
-
-  get password() {
-    return this.#password;
   }
 
   set password(password) {
@@ -38,7 +30,7 @@ export class User {
     return {
       username,
       password,
-      role
+      role: this.#role
     };
   }
 }
@@ -47,14 +39,48 @@ export class User {
 /** @returns {User | null} the user */
 export async function login(username, password) {
   const response = await client.get('users', {
-    params: { username, password }
+    params: { username }
   });
 
-  if (response.status === 404) {
-    return null;
+  if (response.data.length === 0) {
+    throw new DomainError('Username not found');
   }
 
-  const data = response.data;
+  const data = response.data[0];
 
-  return new User(data.username, data.password, data.role);
+  if (data.password !== password) {
+    throw new DomainError('Password does not match');
+  }
+
+  const user = new User();
+  user.username = data.username;
+  user.password = data.password;
+  user.role = data.role;
+
+  saveToSessionStorage({
+    username: data.username,
+    role: data.role
+  });
+
+  return user;
+}
+
+export function getCurrentUser() {
+  try {
+    return loadFromSessionStorage();
+  } catch (err) {
+    return null;
+  }
+}
+
+function saveToSessionStorage(user) {
+  sessionStorage.setItem('user', JSON.stringify(user));
+}
+
+function loadFromSessionStorage() {
+  const { username, role } = JSON.parse(sessionStorage.getItem('user'));
+  const user = new User();
+  user.username = username;
+  user.role = role;
+  return user;
 }

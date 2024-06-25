@@ -16,7 +16,7 @@ function ProtectedRoute({ roles }) {
 export default function App() {
   const main = <BrowserRouter>
     <Routes>
-      <Route path='/login' element={<LoginPage />}></Route>
+      <Route path='/' element={<LoginPage />}></Route>
       <Route element={<ProtectedRoute roles={['admin']} />}>
         <Route path='/admin' element={<AdminPage />}></Route>
       </Route>

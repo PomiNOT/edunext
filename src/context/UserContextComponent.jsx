@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router-dom';
 export const UserContext = createContext();
 
 export default function UserContextComponent({ children }) {
-  const [user, setUser] = useState(null);
+  const [user, setUser] = useState(() => auth.getCurrentUser());
 
   async function login(username, password) {
     const user = await auth.login(username, password);

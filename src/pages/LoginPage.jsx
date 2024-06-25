@@ -2,6 +2,8 @@ import { Form, Input, Button, Select } from 'antd';
 import { UserOutlined, LockOutlined } from '@ant-design/icons';
 import { useContext } from 'react';
 import { UserContext } from '../context/UserContextComponent';
+import { Navigate } from 'react-router-dom';
+import { DomainError } from '../services/errors';
 
 function LoginForm() {
   const { login, user } = useContext(UserContext);
@@ -17,12 +19,13 @@ function LoginForm() {
 
   const onFinish = async ({ username, password }) => {
     try {
-      const user = await login(username, password);
-      if (!user) {
-        alert('Login failed');
-      }
+      await login(username, password);
     } catch (err) {
-      console.log(err);
+      if (err instanceof DomainError) {
+        alert(err.message);
+      } else {
+        throw err;
+      }
     }
   };
 
