@@ -1,6 +1,8 @@
 import UserContextComponent from './context/UserContextComponent';
-import AdminPage from './pages/AdminPage';
-import LoginPage from './pages/LoginPage';
+import AdminPage from './pages/admin/AdminPage';
+import AdminSubjectPage from './pages/admin/AdminSubjectPage';
+import AdminUsersPage from './pages/admin/AdminUsersPage';
+import LoginPage from './pages/login/LoginPage';
 import { BrowserRouter, Routes, Route, Navigate, Outlet } from 'react-router-dom';
 import { UserContext } from './context/UserContextComponent';
 import { useContext } from 'react';
@@ -19,7 +21,10 @@ export default function App() {
     <Routes>
       <Route path='/' element={<LoginPage />}></Route>
       <Route element={<ProtectedRoute roles={['admin']} />}>
-        <Route path='/admin' element={<AdminPage />}></Route>
+        <Route path='/admin' element={<AdminPage />}>
+          <Route path='subjects' element={<AdminSubjectPage />} />
+          <Route path='users' element={<AdminUsersPage />} />
+        </Route>
       </Route>
     </Routes>
   </BrowserRouter>;

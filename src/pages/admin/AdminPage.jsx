@@ -2,12 +2,13 @@ import { DropdownButton, Dropdown, Nav, Navbar, Container } from 'react-bootstra
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faUser } from '@fortawesome/free-solid-svg-icons';
 import { Link } from 'react-router-dom';
-import { UserContext } from '../context/UserContextComponent';
+import { UserContext } from '../../context/UserContextComponent';
 import { useContext } from 'react';
 import { Outlet } from 'react-router-dom';
 
 export default function AdminPage() {
   const { logout } = useContext(UserContext);
+
   return (
     <>
       <Navbar bg='primary' expand='md'>

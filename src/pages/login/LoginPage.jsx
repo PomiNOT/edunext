@@ -1,8 +1,8 @@
 import { Form, Button, FormGroup } from 'react-bootstrap';
 import { useContext, useState } from 'react';
-import { UserContext } from '../context/UserContextComponent';
+import { UserContext } from '../../context/UserContextComponent';
 import { Navigate } from 'react-router-dom';
-import { DomainError } from '../services/errors';
+import { DomainError } from '../../services/errors';
 
 function LoginForm() {
   const { login } = useContext(UserContext);
