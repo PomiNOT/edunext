@@ -4,11 +4,12 @@ import LoginPage from './pages/LoginPage';
 import { BrowserRouter, Routes, Route, Navigate, Outlet } from 'react-router-dom';
 import { UserContext } from './context/UserContextComponent';
 import { useContext } from 'react';
+import 'bootstrap/dist/css/bootstrap.min.css';
 
 function ProtectedRoute({ roles }) {
   const { user } = useContext(UserContext);
-  if (!user) return <Navigate to={'/login'} replace />
-  if (!roles.includes(user.role)) return <Navigate to={'/login'} replace />
+  if (!user) return <Navigate to={'/'} replace />
+  if (!roles.includes(user.role)) return <Navigate to={'/'} replace />
 
   return <Outlet />
 }

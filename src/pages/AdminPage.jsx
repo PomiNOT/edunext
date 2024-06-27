@@ -1,3 +1,35 @@
+import { DropdownButton, Dropdown, Nav, Navbar, Container } from 'react-bootstrap';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faUser } from '@fortawesome/free-solid-svg-icons';
+import { Link } from 'react-router-dom';
+import { UserContext } from '../context/UserContextComponent';
+import { useContext } from 'react';
+import { Outlet } from 'react-router-dom';
+
 export default function AdminPage() {
-  return <h1>This is the admin page</h1>;
+  const { logout } = useContext(UserContext);
+  return (
+    <>
+      <Navbar bg='primary' expand='md'>
+        <Container>
+          <Navbar.Brand as={Link} className='text-light' to='/'>Admin</Navbar.Brand>
+          <Navbar.Toggle data-bs-theme='dark' className='text-white' aria-controls='navbar' />
+          <Navbar.Collapse id='navbar'>
+            <Nav>
+              <Nav.Link as={Link} className='text-light' to='/admin/subjects'>Subjects</Nav.Link>
+              <Nav.Link as={Link} className='text-light' to='/admin/users'>Users</Nav.Link>
+            </Nav>
+            <DropdownButton
+              className='ms-auto'
+              title={<FontAwesomeIcon icon={faUser} />}>
+              <Dropdown.Item className='text-danger' onClick={logout}>Logout</Dropdown.Item>
+            </DropdownButton>
+          </Navbar.Collapse>
+        </Container>
+      </Navbar>
+      <Container className='mt-3'>
+        <Outlet />
+      </Container>
+    </>
+  )
 }

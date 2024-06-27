@@ -65,6 +65,10 @@ export async function login(username, password) {
   return user;
 }
 
+export function logout() {
+  sessionStorage.removeItem('user');
+}
+
 export function getCurrentUser() {
   try {
     return loadFromSessionStorage();

@@ -14,7 +14,12 @@ export default function UserContextComponent({ children }) {
     return user;
   }
 
-  return <UserContext.Provider value={{ user, login }}>
+  function logout() {
+    auth.logout();
+    setUser(null);
+  }
+
+  return <UserContext.Provider value={{ user, login, logout }}>
     {children}
   </UserContext.Provider>
 }

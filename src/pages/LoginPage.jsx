@@ -1,23 +1,27 @@
-import { Form, Input, Button, Select } from 'antd';
-import { UserOutlined, LockOutlined } from '@ant-design/icons';
-import { useContext } from 'react';
+import { Form, Button, FormGroup } from 'react-bootstrap';
+import { useContext, useState } from 'react';
 import { UserContext } from '../context/UserContextComponent';
 import { Navigate } from 'react-router-dom';
 import { DomainError } from '../services/errors';
 
 function LoginForm() {
-  const { login, user } = useContext(UserContext);
+  const { login } = useContext(UserContext);
+  const [validated, setValidated] = useState(false);
 
-  switch (user?.role) {
-    case 'admin':
-      return <Navigate to='/admin' />;
-    case 'teacher':
-      return <Navigate to='/teacher' />;
-    case 'student':
-      return <Navigate to='/student' />;
-  }
+  const onSubmit = async (event) => {
+    event.preventDefault();
 
-  const onFinish = async ({ username, password }) => {
+    const form = event.currentTarget;
+    
+    if (!form.checkValidity()) {
+      event.stopPropagation();
+      setValidated(true);
+      return;
+    }
+
+    const username = form.username.value;
+    const password = form.password.value;
+
     try {
       await login(username, password);
     } catch (err) {
@@ -34,53 +38,35 @@ function LoginForm() {
       <div className='text-center'>
         <h1 className='font-bold mb-3 text-2xl'>Login</h1>
       </div>
-      <Form
-        onFinish={onFinish}
-        initialValues={{ campus: 'hn' }}
-      >
-        <Form.Item
-          name="campus"
-          label="Select Campus"
-          rules={[{ required: true, message: 'Please select a campus!' }]}
-        >
-          <Select>
-            <Option value="hn">Hanoi</Option>
-            <Option value="hcm">Ho Chi Minh</Option>
-            <Option value="dn">Da Nang</Option>
-            <Option value="ct">Can Tho</Option>
-            <Option value="qn">Quy Nhon</Option>
-          </Select>
-        </Form.Item>
-        <Form.Item
-          name='username'
-          rules={[{ required: true, message: 'Please input your Username!' }]}
-        >
-          <Input prefix={<UserOutlined className='site-form-item-icon' />} placeholder='Username' />
-        </Form.Item>
-        <Form.Item
-          name='password'
-          rules={[{ required: true, message: 'Please input your Password!' }]}
-        >
-          <Input
-            prefix={<LockOutlined className='site-form-item-icon' />}
-            type='password'
-            placeholder='Password'
-          />
-        </Form.Item>
-
-        <div className='flex justify-center'>
-          <Form.Item>
-            <Button type='primary' htmlType='submit'>
-              Log in
-            </Button>
-          </Form.Item>
-        </div>
+      <Form noValidate onSubmit={onSubmit} validated={validated} onChange={() => setValidated(false)}>
+        <Form.Group className='mb-3'>
+          <Form.Label>Username</Form.Label>
+          <Form.Control type='text' name='username' placeholder='Username' required />
+          <Form.Control.Feedback type='invalid'>Username is required</Form.Control.Feedback>
+        </Form.Group>
+        <FormGroup className='mb-3'>
+          <Form.Label>Password</Form.Label>
+          <Form.Control type="password" name='password' placeholder="Password" required />
+          <Form.Control.Feedback type='invalid'>Password is required</Form.Control.Feedback>
+        </FormGroup>
+        <Button type="submit">Log in</Button>
       </Form>
     </div>
   );
 };
 
 export default function LoginPage() {
+  const { user } = useContext(UserContext);
+
+  switch (user?.role) {
+    case 'admin':
+      return <Navigate to='/admin' />;
+    case 'teacher':
+      return <Navigate to='/teacher' />;
+    case 'student':
+      return <Navigate to='/student' />;
+  }
+
   return (
     <main className='h-screen flex'>
       <div className='flex-1 grid place-items-center'>
@@ -92,3 +78,4 @@ export default function LoginPage() {
     </main>
   )
 }
+
