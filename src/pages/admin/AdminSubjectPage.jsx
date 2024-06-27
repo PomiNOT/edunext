@@ -1,7 +1,3 @@
 export default function AdminSubjectPage() {
-    return (
-        <div>
-            AdminSubjectPage
-        </div>
-    )
+  return <div>AdminSubjectPage</div>;
 }

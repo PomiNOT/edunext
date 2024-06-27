@@ -1,6 +1,5 @@
-import { createContext, useState } from 'react';
-import * as auth from '../services/auth';
-import { useNavigate } from 'react-router-dom';
+import { createContext, useState } from "react";
+import * as auth from "../services/auth";
 
 export const UserContext = createContext();
 
@@ -19,7 +18,9 @@ export default function UserContextComponent({ children }) {
     setUser(null);
   }
 
-  return <UserContext.Provider value={{ user, login, logout }}>
-    {children}
-  </UserContext.Provider>
+  return (
+    <UserContext.Provider value={{ user, login, logout }}>
+      {children}
+    </UserContext.Provider>
+  );
 }

@@ -11,9 +11,7 @@
   },
   "customizations": {
     "codespaces": {
-      "openFiles": [
-        "src/App.js"
-      ]
+      "openFiles": ["src/App.js"]
     }
   },
   "portsAttributes": {
@@ -22,7 +20,5 @@
       "onAutoForward": "openPreview"
     }
   },
-  "forwardPorts": [
-    3000
-  ]
+  "forwardPorts": [3000]
 }

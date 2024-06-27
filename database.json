@@ -2,16 +2,19 @@
   "users": [
     {
       "username": "admin",
+      "fullName": "Ad Van Min",
       "role": "admin",
       "password": "adminadminadmin"
     },
     {
       "username": "teacher",
+      "fullName": "Nguyen Tan Tai",
       "role": "teacher",
       "password": "teacherteacherteacher"
     },
     {
       "username": "student",
+      "fullName": "Ai do",
       "role": "student",
       "password": "studentstudentstudent"
     }
