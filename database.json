@@ -1,4 +1,23 @@
 {
-  "users": [],
+  "users": [
+    {
+      "username": "student",
+      "password": "$2a$10$oS.XtBjwe.X8i5IR32ULA.tyzGJLWYtQfVRRTz/2QAYd.WlOWyjtC",
+      "role": "student",
+      "id": 3
+    },
+    {
+      "username": "admin",
+      "password": "$2a$10$JkWM3ima1qAVMB2pMQugdO2Fr8cXuKAwdFaxZZxu8/6pKFB.o7K/G",
+      "role": "admin",
+      "id": 5
+    },
+    {
+      "username": "nice",
+      "password": "$2a$10$OWXI5q9Ize3FIRLu2TDvLeZ6F4nK5.675KKmYNtP53U.oeOvLSOIi",
+      "role": "student",
+      "id": 6
+    }
+  ],
   "personels": []
 }

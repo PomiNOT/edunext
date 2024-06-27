@@ -4,7 +4,11 @@ import { DomainError } from "./errors";
 
 export async function getAll() {
   const response = await client.get("users");
-  return response.data;
+  return response.data.map((user) => {
+    const authUser = new AuthUser();
+    authUser.fromObject(user);
+    return authUser;
+  });
 }
 
 export async function register(username, password, role) {
@@ -48,18 +52,16 @@ export async function login(username, password) {
   }
 
   const data = response.data[0];
+  const user = new AuthUser();
+  user.fromObject(data);
 
-  if (data.password !== password) {
+  if (!user.verifyPassword(password)) {
     throw new DomainError("Password does not match");
   }
 
-  const user = new AuthUser();
-  user.username = data.username;
-  user.role = data.role;
-
   saveToSessionStorage({
-    username: data.username,
-    role: data.role,
+    username: user.username,
+    role: user.role
   });
 
   return user;
@@ -88,3 +90,7 @@ function loadFromSessionStorage() {
   user.role = role;
   return user;
 }
+
+register("admin", "password", "admin")
+register("teacher", "password", "teacher")
+register("student", "password", "student")
