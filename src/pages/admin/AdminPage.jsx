@@ -13,7 +13,7 @@ import { useContext } from "react";
 import { Outlet } from "react-router-dom";
 
 export default function AdminPage() {
-  const { logout } = useContext(UserContext);
+  const { logout, user } = useContext(UserContext);
 
   return (
     <>
@@ -44,7 +44,11 @@ export default function AdminPage() {
             </Nav>
             <DropdownButton
               className="ms-auto"
-              title={<FontAwesomeIcon icon={faUser} />}
+              title={
+                <span>
+                  <FontAwesomeIcon icon={faUser} /> {user.username}
+                </span>
+              }
             >
               <Dropdown.Item className="text-danger" onClick={logout}>
                 Logout

@@ -1,22 +1,22 @@
 {
   "users": [
     {
-      "username": "student",
-      "password": "$2a$10$oS.XtBjwe.X8i5IR32ULA.tyzGJLWYtQfVRRTz/2QAYd.WlOWyjtC",
-      "role": "student",
-      "id": 3
-    },
-    {
       "username": "admin",
-      "password": "$2a$10$JkWM3ima1qAVMB2pMQugdO2Fr8cXuKAwdFaxZZxu8/6pKFB.o7K/G",
+      "password": "$2a$10$mNudCUEjSNPVlwHDfeq8n.BJCf3zUfBnJ8Z28b1muPdeUE/LgLC0K",
       "role": "admin",
-      "id": 5
+      "id": 8
     },
     {
-      "username": "nice",
-      "password": "$2a$10$OWXI5q9Ize3FIRLu2TDvLeZ6F4nK5.675KKmYNtP53U.oeOvLSOIi",
+      "username": "teacher",
+      "password": "$2a$10$/35eYT6FE3qMxnJ6wF0OP.4Pl2f1g5weKdltjHBfHWMDOXGKI7zyq",
+      "role": "teacher",
+      "id": 9
+    },
+    {
+      "username": "student",
+      "password": "$2a$10$qOWwEUP0qQkBBo8GNGSgQe70naubFMQeFfQTZ.Zrd7YzK.QdDl56C",
       "role": "student",
-      "id": 6
+      "id": 10
     }
   ],
   "personels": []

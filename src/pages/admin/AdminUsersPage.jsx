@@ -13,6 +13,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faUser, faTrash, faPencil, faAdd } from "@fortawesome/free-solid-svg-icons";
 import { Card } from "react-bootstrap";
 import { DomainError } from "../../services/errors";
+import { UserContext } from "../../context/UserContextComponent";
 
 const UsersManagementContext = createContext();
 
@@ -26,8 +27,14 @@ const headers = [
     cellProps: { className: "w-12" },
     cell({ id }) {
       const { deleteUser } = useContext(UsersManagementContext);
+      const { user } = useContext(UserContext);
 
       async function handleDelete() {
+        if (id === user.id) {
+          alert("You cannot delete yourself");
+          return;
+        }
+
         try {
           if (window.confirm("Are you sure you want to delete this user?")) {
             await deleteUser(id);

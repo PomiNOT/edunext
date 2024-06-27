@@ -4,6 +4,7 @@ import { DomainError } from "./errors";
 
 export async function getAll() {
   const response = await client.get("users");
+
   return response.data.map((user) => {
     const authUser = new AuthUser();
     authUser.fromObject(user);
@@ -61,7 +62,8 @@ export async function login(username, password) {
 
   saveToSessionStorage({
     username: user.username,
-    role: user.role
+    role: user.role,
+    id: user.id
   });
 
   return user;
@@ -84,8 +86,9 @@ function saveToSessionStorage(user) {
 }
 
 function loadFromSessionStorage() {
-  const { username, role } = JSON.parse(sessionStorage.getItem("user"));
+  const { username, role, id } = JSON.parse(sessionStorage.getItem("user"));
   const user = new AuthUser();
+  user.id = id;
   user.username = username;
   user.role = role;
   return user;
