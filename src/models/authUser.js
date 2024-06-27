@@ -1,6 +1,6 @@
 import { DomainError } from "../services/errors";
 
-export class User {
+export class AuthUser {
   #role;
   #password;
   username;

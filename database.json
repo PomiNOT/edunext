@@ -1,22 +1,19 @@
 {
   "users": [
     {
+      "id": 1,
       "username": "admin",
-      "fullName": "Ad Van Min",
       "role": "admin",
       "password": "adminadminadmin"
-    },
+    }
+  ],
+  "personels": [
     {
-      "username": "teacher",
-      "fullName": "Nguyen Tan Tai",
-      "role": "teacher",
-      "password": "teacherteacherteacher"
-    },
-    {
-      "username": "student",
-      "fullName": "Ai do",
-      "role": "student",
-      "password": "studentstudentstudent"
+      "id": 1,
+      "userId": 1,
+      "fullName": "Mr. Admin",
+      "dateOfBirth": "1999-04-23",
+      "phone": "0123456789"
     }
   ]
 }

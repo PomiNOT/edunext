@@ -1,8 +1,13 @@
 import { client } from "./client";
-import { User } from "../models/users";
+import { AuthUser } from "../models/authUser";
 import { DomainError } from "./errors";
 
-/** @returns {User | null} the user */
+export async function getAll() {
+  const response = await client.get("users");
+  return response.data;
+}
+
+/** @returns {AuthUser | null} the user */
 export async function login(username, password) {
   const response = await client.get("users", {
     params: { username },
@@ -18,7 +23,7 @@ export async function login(username, password) {
     throw new DomainError("Password does not match");
   }
 
-  const user = new User();
+  const user = new AuthUser();
   user.username = data.username;
   user.role = data.role;
 
@@ -48,7 +53,7 @@ function saveToSessionStorage(user) {
 
 function loadFromSessionStorage() {
   const { username, role } = JSON.parse(sessionStorage.getItem("user"));
-  const user = new User();
+  const user = new AuthUser();
   user.username = username;
   user.role = role;
   return user;
