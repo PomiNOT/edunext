@@ -27,8 +27,8 @@ export class AuthUser {
 
   toObject() {
     return {
-      username,
-      password,
+      username: this.username,
+      password: this.#password,
       role: this.#role,
     };
   }

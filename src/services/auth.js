@@ -7,6 +7,36 @@ export async function getAll() {
   return response.data;
 }
 
+export async function register(username, password, role) {
+  const user = new AuthUser();
+  user.username = username;
+  user.password = password;
+  user.role = role;
+
+  let response = await client.get("users", {
+    params: { username },
+  });
+
+  if (response.data.length !== 0) {
+    throw new DomainError("Username already exists");
+  }
+
+  response = await client.post("users", user.toObject());
+  return response.data;
+}
+
+export async function deleteUser(id) {
+  try {
+    const response = await client.delete(`users/${id}`);
+  } catch (err) {
+    if (err.response.status === 404) {
+      throw new DomainError("User not found");
+    } else {
+      throw err;
+    }
+  }
+}
+
 /** @returns {AuthUser | null} the user */
 export async function login(username, password) {
   const response = await client.get("users", {

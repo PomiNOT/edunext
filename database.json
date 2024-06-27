@@ -1,19 +1,4 @@
 {
-  "users": [
-    {
-      "id": 1,
-      "username": "admin",
-      "role": "admin",
-      "password": "adminadminadmin"
-    }
-  ],
-  "personels": [
-    {
-      "id": 1,
-      "userId": 1,
-      "fullName": "Mr. Admin",
-      "dateOfBirth": "1999-04-23",
-      "phone": "0123456789"
-    }
-  ]
+  "users": [],
+  "personels": []
 }

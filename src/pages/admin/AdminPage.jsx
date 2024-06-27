@@ -36,7 +36,7 @@ export default function AdminPage() {
                 Users
               </Nav.Link>
               <Nav.Link as={Link} className="text-light" to="/admin/teachers">
-                Teacher
+                Teachers
               </Nav.Link>
               <Nav.Link as={Link} className="text-light" to="/admin/students">
                 Students
