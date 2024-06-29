@@ -1,6 +1,7 @@
 import { client } from "./client";
 import { AuthUser } from "../models/authUser";
 import { DomainError } from "./errors";
+import { createStudent, deleteStudent } from "./students";
 
 export async function getAll() {
   const response = await client.get("users");
@@ -27,10 +28,57 @@ export async function register(username, password, role) {
   }
 
   response = await client.post("users", user.toObject());
-  return response.data;
+
+  await createPersonByRole(response.data.id, username, role);
+
+  const authUser = new AuthUser();
+  authUser.fromObject(response.data);
+  return authUser;
+}
+
+async function deletePersonByRole(userId) {
+  switch (getCurrentUser().role) {
+    case "student":
+      return deleteStudent(userId);
+    default:
+      console.log(`Unknown role: ${getCurrentUser().role}`);
+      break;
+  }
+}
+
+async function createPersonByRole(userId, username, role) {
+  switch (role) {
+    case "student":
+      return createStudent({ userId, fullName: username, semesterNumber: 1 });
+    default:
+      console.log(`Unknown role: ${role}`);
+      break;
+  }
+}
+
+export async function changePassword(id, password) {
+  const user = new AuthUser();
+  user.id = id;
+  user.password = password;
+
+  const response = await client.patch(`users/${id}`, user.toObject());
+
+  if (response.status !== 200) {
+    throw new DomainError("Failed to change password");
+  }
+
+  const authUser = new AuthUser();
+  authUser.fromObject(response.data);
+  return authUser;
 }
 
 export async function deleteUser(id) {
+  const user = getCurrentUser();
+
+  if (user.id === id) {
+    throw new DomainError("You cannot delete yourself");
+  }
+
   try {
     const response = await client.delete(`users/${id}`);
   } catch (err) {
@@ -40,6 +88,8 @@ export async function deleteUser(id) {
       throw err;
     }
   }
+
+  await deletePersonByRole(id);
 }
 
 /** @returns {AuthUser | null} the user */
@@ -63,7 +113,7 @@ export async function login(username, password) {
   saveToSessionStorage({
     username: user.username,
     role: user.role,
-    id: user.id
+    id: user.id,
   });
 
   return user;
@@ -94,6 +144,4 @@ function loadFromSessionStorage() {
   return user;
 }
 
-register("admin", "password", "admin")
-register("teacher", "password", "teacher")
-register("student", "password", "student")
+register("admin", "password", "admin");

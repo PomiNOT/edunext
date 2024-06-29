@@ -1,35 +1,63 @@
-import { DomainError } from "./errors";
-export class Person {
+import { DomainError } from "../services/errors";
+
+export class Student {
+  #id;
+  #userId;
   fullName;
-  #dateOfBirth;
-  #phone;
+  #semesterNumber;
 
-  get dateOfBirth() {
-    return this.#dateOfBirth;
+  get id() {
+    return this.#id;
   }
 
-  set dateOfBirth(dateOfBirth) {
-    // validate not in the future
-    if (new Date(dateOfBirth) > new Date()) {
-      throw new DomainError("Date of birth cannot be in the future");
+  get userId() {
+    return this.#userId;
+  }
+
+  get semesterNumber() {
+    return this.#semesterNumber;
+  }
+
+  set id(id) {
+    if (typeof id !== "number") {
+      this.#id = parseInt(id);
+    } else {
+      this.#id = id;
     }
   }
 
-  get phone() {
-    return this.#phone;
+  set userId(id) {
+    if (typeof id !== "number") {
+      this.#userId = parseInt(id);
+    } else {
+      this.#userId = id;
+    }
   }
 
-  set phone(phone) {
-    if (phone.length !== 10) {
-      throw new DomainError("Phone number must be 10 digits");
+  set semesterNumber(no) {
+    if (typeof no !== "number") {
+      no = parseInt(no);
     }
+
+    if (no < 1 || no > 9) {
+      throw new DomainError("Semester number must be between 1 and 9");
+    }
+
+    this.#semesterNumber = no;
+  }
+
+  fromObject(obj) {
+    this.id = obj.id;
+    this.userId = obj.userId;
+    this.fullName = obj.fullName;
+    this.semesterNumber = obj.semesterNumber;
   }
 
   toObject() {
     return {
+      userId: this.#userId,
       fullName: this.fullName,
-      dateOfBirth: this.dateOfBirth,
-      phone: this.phone,
+      semesterNumber: this.#semesterNumber,
     };
   }
 }

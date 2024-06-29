@@ -10,10 +10,14 @@ import { useState, useEffect, createContext, useContext } from "react";
 import { Col, Row, Table, Button, Form, Modal } from "react-bootstrap";
 import * as auth from "../../services/auth";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faUser, faTrash, faPencil, faAdd } from "@fortawesome/free-solid-svg-icons";
+import {
+  faUser,
+  faTrash,
+  faPencil,
+  faAdd,
+} from "@fortawesome/free-solid-svg-icons";
 import { Card } from "react-bootstrap";
 import { DomainError } from "../../services/errors";
-import { UserContext } from "../../context/UserContextComponent";
 
 const UsersManagementContext = createContext();
 
@@ -24,20 +28,17 @@ const headers = [
     title: "Actions",
     prop: "id",
     isSortable: false,
-    cellProps: { className: "w-12" },
-    cell({ id }) {
+    cellProps: { className: "w-1 whitespace-nowrap" },
+    cell(user) {
       const { deleteUser } = useContext(UsersManagementContext);
-      const { user } = useContext(UserContext);
+      const [showChangePasswordDialog, setShowChangePasswordDialog] = useState(
+        false
+      );
 
       async function handleDelete() {
-        if (id === user.id) {
-          alert("You cannot delete yourself");
-          return;
-        }
-
         try {
           if (window.confirm("Are you sure you want to delete this user?")) {
-            await deleteUser(id);
+            await deleteUser(user.id);
           }
         } catch (err) {
           if (err instanceof DomainError) {
@@ -50,18 +51,93 @@ const headers = [
       }
 
       return (
-        <div className="space-x-2 flex justify-end">
-          <Button variant="danger" onClick={handleDelete}>
-            <FontAwesomeIcon icon={faTrash} />
-          </Button>
-          <Button variant="warning">
-            <FontAwesomeIcon icon={faPencil} />
-          </Button>
-        </div>
+        <>
+          {showChangePasswordDialog && (
+            <ChangePasswordDialog
+              id={user.id}
+              onDone={() => setShowChangePasswordDialog(false)}
+              show={showChangePasswordDialog}
+            />
+          )}
+          <div className="space-x-2">
+            <Button variant="danger" onClick={handleDelete}>
+              <FontAwesomeIcon icon={faTrash} /> Delete
+            </Button>
+            <Button variant="warning" onClick={() => setShowChangePasswordDialog(true)}>
+              <FontAwesomeIcon icon={faPencil} /> Change Password
+            </Button>
+          </div>
+        </>
       );
     },
   },
 ];
+
+function ChangePasswordDialog({ id, onDone, show }) {
+  const [password, setPassword] = useState("");
+  const [validated, setValidated] = useState(false);
+  const { changePassword } = useContext(UsersManagementContext);
+  const [loading, setLoading] = useState(false);
+
+  const onSubmit = async (event) => {
+    event.preventDefault();
+    event.stopPropagation();
+    setValidated(true);
+
+    if (!event.currentTarget.checkValidity()) {
+      return;
+    }
+
+    try {
+      setLoading(true);
+      await changePassword(id, password);
+      onDone();
+    } catch (err) {
+      if (err instanceof DomainError) {
+        alert(err.message);
+        return;
+      } else {
+        throw err;
+      }
+    }
+  }
+
+  return (
+    <Modal show={show}>
+      <Modal.Header>
+        <Modal.Title>
+          Change Password
+        </Modal.Title>
+      </Modal.Header>
+      <Form noValidate validated={validated} onSubmit={onSubmit}>
+      <Modal.Body>
+          <Form.Group controlId="password">
+            <Form.Label>Password</Form.Label>
+            <Form.Control
+              type="password"
+              value={password}
+              onChange={(event) => setPassword(event.target.value)}
+              placeholder="Enter password"
+              minLength={8}
+              required
+            />
+            <Form.Control.Feedback type="invalid">
+              Password must be at least 8 characters
+            </Form.Control.Feedback>
+          </Form.Group>
+      </Modal.Body>
+      <Modal.Footer>
+        <Button variant="secondary" onClick={() => onDone()}>
+          Cancel
+        </Button>
+        <Button variant="primary" type="submit" disabled={loading}>
+          {loading ? "Changing password..." : "Change Password"}
+        </Button>
+      </Modal.Footer>
+      </Form>
+    </Modal>
+  )
+}
 
 function AddUserDialog({ onDone, show }) {
   const [username, setUsername] = useState("");
@@ -102,8 +178,13 @@ function AddUserDialog({ onDone, show }) {
           Add User
         </Modal.Title>
       </Modal.Header>
-      <Form noValidate onSubmit={onSubmit} validated={validated} className="space-y-4">
-      <Modal.Body>
+      <Form
+        noValidate
+        onSubmit={onSubmit}
+        validated={validated}
+        className="space-y-4"
+      >
+        <Modal.Body>
           <Form.Group controlId="username">
             <Form.Label>Username</Form.Label>
             <Form.Control
@@ -133,19 +214,24 @@ function AddUserDialog({ onDone, show }) {
           </Form.Group>
           <Form.Group controlId="role">
             <Form.Label>Role</Form.Label>
-            <Form.Select value={role} onChange={(event) => setRole(event.target.value)}>
+            <Form.Select
+              value={role}
+              onChange={(event) => setRole(event.target.value)}
+            >
               <option value="student">Student</option>
               <option value="admin">Admin</option>
               <option value="teacher">Teacher</option>
             </Form.Select>
           </Form.Group>
-      </Modal.Body>
-      <Modal.Footer>
-        <Button variant="secondary" onClick={() => onDone()}>Cancel</Button>
-        <Button variant="primary" type="submit" disabled={loading}>
-          {loading ? "Saving..." : "Save"}
-        </Button>
-      </Modal.Footer>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={() => onDone()}>
+            Cancel
+          </Button>
+          <Button variant="primary" type="submit" disabled={loading}>
+            {loading ? "Saving..." : "Save"}
+          </Button>
+        </Modal.Footer>
       </Form>
     </Modal>
   );
@@ -163,7 +249,11 @@ function Wrapper({ children }) {
       return;
     }
 
-    const newUser = await auth.register(user.username, user.password, user.role);
+    const newUser = await auth.register(
+      user.username,
+      user.password,
+      user.role
+    );
     setUsers([...users, newUser]);
   }
 
@@ -172,9 +262,17 @@ function Wrapper({ children }) {
     setUsers(users.filter((user) => user.id !== id));
   }
 
-  return <UsersManagementContext.Provider value={{ users, registerUser, deleteUser }}>
-    {children}
-  </UsersManagementContext.Provider>;
+  async function changePassword(id, password) {
+    await auth.changePassword(id, password);
+  }
+
+  return (
+    <UsersManagementContext.Provider
+      value={{ users, registerUser, deleteUser, changePassword }}
+    >
+      {children}
+    </UsersManagementContext.Provider>
+  );
 }
 
 function UsersTable() {
@@ -184,7 +282,10 @@ function UsersTable() {
   return (
     <>
       {showAddUserDialog && (
-        <AddUserDialog show={showAddUserDialog} onDone={() => setShowAddUserDialog(false)} />
+        <AddUserDialog
+          show={showAddUserDialog}
+          onDone={() => setShowAddUserDialog(false)}
+        />
       )}
 
       <DatatableWrapper

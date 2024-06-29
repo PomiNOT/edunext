@@ -2,22 +2,11 @@
   "users": [
     {
       "username": "admin",
-      "password": "$2a$10$mNudCUEjSNPVlwHDfeq8n.BJCf3zUfBnJ8Z28b1muPdeUE/LgLC0K",
+      "password": "$2a$10$VdUBO4ARDNhHU48hQcIyPuYa4cysf9VqUXubHwrrpIKJQJupiaepu",
       "role": "admin",
-      "id": 8
-    },
-    {
-      "username": "teacher",
-      "password": "$2a$10$/35eYT6FE3qMxnJ6wF0OP.4Pl2f1g5weKdltjHBfHWMDOXGKI7zyq",
-      "role": "teacher",
-      "id": 9
-    },
-    {
-      "username": "student",
-      "password": "$2a$10$qOWwEUP0qQkBBo8GNGSgQe70naubFMQeFfQTZ.Zrd7YzK.QdDl56C",
-      "role": "student",
-      "id": 10
+      "id": 11
     }
   ],
-  "personels": []
+  "students": [],
+  "teachers": []
 }
