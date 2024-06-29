@@ -21,6 +21,10 @@ export class Student {
   set id(id) {
     if (typeof id !== "number") {
       this.#id = parseInt(id);
+
+      if (Number.isNaN(this.#id)) {
+        throw new DomainError("Student id must be a number");
+      }
     } else {
       this.#id = id;
     }
@@ -29,6 +33,10 @@ export class Student {
   set userId(id) {
     if (typeof id !== "number") {
       this.#userId = parseInt(id);
+
+      if (Number.isNaN(this.#userId)) {
+        throw new DomainError("User id must be a number");
+      }
     } else {
       this.#userId = id;
     }
@@ -37,6 +45,10 @@ export class Student {
   set semesterNumber(no) {
     if (typeof no !== "number") {
       no = parseInt(no);
+
+      if (Number.isNaN(no)) {
+        throw new DomainError("Semester number must be a number");
+      }
     }
 
     if (no < 1 || no > 9) {

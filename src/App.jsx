@@ -13,6 +13,7 @@ import {
 import { UserContext } from "./context/UserContextComponent";
 import { useContext } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
+import AdminSubjectDetailPage from "./pages/admin/AdminSubjectDetailPage";
 
 function ProtectedRoute({ roles }) {
   const { user } = useContext(UserContext);
@@ -30,6 +31,7 @@ export default function App() {
         <Route element={<ProtectedRoute roles={["admin"]} />}>
           <Route path="/admin" element={<AdminPage />}>
             <Route path="subjects" element={<AdminSubjectPage />} />
+            <Route path="subjects/:id" element={<AdminSubjectDetailPage />} />
             <Route path="users" element={<AdminUsersPage />} />
           </Route>
         </Route>

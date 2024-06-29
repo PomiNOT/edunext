@@ -31,6 +31,10 @@ export class AuthUser {
   set id(id) {
     if (typeof id !== "number") {
       this.#id = parseInt(id);
+
+      if (Number.isNaN(this.#id)) {
+        throw new DomainError("User id must be a number");
+      }
     } else {
       this.#id = id;
     }

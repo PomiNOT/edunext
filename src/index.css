@@ -1,3 +1,7 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+.question-accordion .accordion-button::after {
+  align-self: flex-end;
+}

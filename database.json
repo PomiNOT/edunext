@@ -2,11 +2,32 @@
   "users": [
     {
       "username": "admin",
-      "password": "$2a$10$VdUBO4ARDNhHU48hQcIyPuYa4cysf9VqUXubHwrrpIKJQJupiaepu",
+      "password": "$2a$10$QzaYMFgFdPWY5yM.q5r61.9qBM6ccSVNVPBi8zsIk.jp54UW/5fYa",
       "role": "admin",
-      "id": 11
+      "id": 1
+    },
+    {
+      "username": "youtuber",
+      "password": "$2a$10$7SNPWgsl75pOzLGYtO/Y9ei2QlXzjn5jxQaDhjUiSVfGRD6clZszW",
+      "role": "student",
+      "id": 2
     }
   ],
-  "students": [],
-  "teachers": []
+  "students": [
+    {
+      "userId": 2,
+      "fullName": "youtuber",
+      "semesterNumber": 1,
+      "id": 1
+    }
+  ],
+  "teachers": [],
+  "subjects": [
+    {
+      "name": "CSI104",
+      "semesterNumber": 1,
+      "id": 1
+    }
+  ],
+  "images": []
 }
