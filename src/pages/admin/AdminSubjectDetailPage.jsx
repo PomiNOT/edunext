@@ -1,220 +1,328 @@
-import SlotListing from '../../components/SlotListing';
-import { Button, Card } from 'react-bootstrap';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faCog, faBook, faAdd, faArrowLeft } from '@fortawesome/free-solid-svg-icons';
-import { Link } from 'react-router-dom';
+import SlotListing from "../../components/SlotListing";
+import { Button, Card, ListGroup, Form, Modal, Row, Col } from "react-bootstrap";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {
+  faCog,
+  faBook,
+  faAdd,
+  faTrash,
+  faArrowLeft,
+} from "@fortawesome/free-solid-svg-icons";
+import { Link, useParams } from "react-router-dom";
+import { useState, useContext, createContext, useEffect } from "react";
+import { DomainError } from "../../services/errors";
+import * as subjectsService from "../../services/subjects";
 
-const fakeData = [
-  {
-    slotNumber: 1,
-    description: "Slot 1",
-    questions: [
-      {
-        content: "Question 1",
-        started: true,
-      },
-      {
-        content: "Question 2",
-        started: false,
-      },
-      {
-        content: "Question 3",
-        started: false,
-      },
-    ],
-  },
-  {
-    slotNumber: 2,
-    description: "Slot 2",
-    questions: [
-      {
-        content: "What is the meaning of life?",
-        started: true,
-      },
-      {
-        content: "How does the universe work?",
-        started: false,
-      },
-      {
-        content: "Is there a God?",
-        started: false,
-      },
-    ],
-  },
-  {
-    slotNumber: 3,
-    description: "Slot 3",
-    questions: [
-      {
-        content: "What is the best programming language?",
-        started: true,
-      },
-      {
-        content: "How do I improve my coding skills?",
-        started: false,
-      },
-      {
-        content: "Is Python the best language?",
-        started: false,
-      },
-    ],
-  },
-  {
-    slotNumber: 4,
-    description: "Slot 4",
-    questions: [
-      {
-        content: "What is the best way to learn a new language?",
-        started: true,
-      },
-      {
-        content: "How do I practice speaking a language?",
-        started: false,
-      },
-      {
-        content: "Is Duolingo effective?",
-        started: false,
-      },
-    ],
-  },
-  {
-    slotNumber: 5,
-    description: "Slot 5",
-    questions: [
-      {
-        content: "What is the most beautiful city in the world?",
-        started: true,
-      },
-      {
-        content: "How do I travel cheap?",
-        started: false,
-      },
-      {
-        content: "Is backpacking the best way to travel?",
-        started: false,
-      },
-    ],
-  },
-  {
-    slotNumber: 6,
-    description: "Slot 6",
-    questions: [
-      {
-        content: "What is the best way to get fit?",
-        started: true,
-      },
-      {
-        content: "How do I lose weight?",
-        started: false,
-      },
-      {
-        content: "Is running the best exercise?",
-        started: false,
-      },
-    ],
-  },
-  {
-    slotNumber: 7,
-    description: "Slot 7",
-    questions: [
-      {
-        content: "What is the best way to learn a new skill?",
-        started: true,
-      },
-      {
-        content: "How do I practice a new skill?",
-        started: false,
-      },
-      {
-        content: "Is YouTube the best way to learn?",
-        started: false,
-      },
-    ],
-  },
-  {
-    slotNumber: 8,
-    description: "Slot 8",
-    questions: [
-      {
-        content: "What is the best way to make money?",
-        started: true,
-      },
-      {
-        content: "How do I start a business?",
-        started: false,
-      },
-      {
-        content: "Is entrepreneurship the best way to make money?",
-        started: false,
-      },
-    ],
-  },
-  {
-    slotNumber: 9,
-    description: "Slot 9",
-    questions: [
-      {
-        content: "What is the best way to improve my memory?",
-        started: true,
-      },
-      {
-        content: "How do I improve my focus?",
-        started: false,
-      },
-      {
-        content: "Is meditation the best way to improve focus?",
-        started: false,
-      },
-    ],
-  },
-  {
-    slotNumber: 10,
-    description: "Slot 10",
-    questions: [
-      {
-        content: "What is the best way to improve my creativity?",
-        started: true,
-      },
-      {
-        content: "How do I improve my creativity?",
-        started: false,
-      },
-      {
-        content: "Is brainstorming the best way to improve creativity?",
-        started: false,
-      },
-    ],
-  },
-];
+const SubjectDetailContext = createContext();
 
-function List() {
-  function handleSettings(event) {
-    event.stopPropagation();
-    alert("Not implemented yet");
+function QuestionsEditor({ questions: theQuestions, onChange }) {
+  const [questions, setQuestions] = useState(theQuestions);
+
+  function handleAddQuestion() {
+    const newQuestions = [...questions, ""];
+    setQuestions(newQuestions);
+    onChange(newQuestions);
   }
 
-  return <div className="space-y-3">
-      {fakeData.map((data) => (
-        <SlotListing
-          key={data.slotNumber}
-          slotNumber={data.slotNumber}
-          content={data.description}
-          questions={data.questions}
-          showStatus={false}
+  function handleDeleteQuestion(index) {
+    if (!window.confirm("Are you sure you want to delete this question?")) {
+      return;
+    }
+
+    const newQuestions = questions.filter((_, i) => i !== index);
+    setQuestions(newQuestions);
+    onChange(newQuestions);
+  }
+
+  return (
+    <>
+      <div className="space-y-3">
+        {questions.map((question, index) => (
+          <Row key={index}>
+            <Col sm={10}>
+              <Form.Group>
+                <Form.Control
+                  type="text"
+                  placeholder={`Question ${index + 1}`}
+                  defaultValue={question}
+                  onChange={(e) => {
+                    const newQuestions = [...questions];
+                    newQuestions[index] = e.target.value;
+                    setQuestions(newQuestions);
+                    onChange(newQuestions);
+                  }}
+                  required
+                />
+                <Form.Control.Feedback type="invalid">
+                  Question text is required
+                </Form.Control.Feedback>
+              </Form.Group>
+            </Col>
+            <Col className="col-auto justify-content-end">
+              <Button variant="danger" onClick={() => handleDeleteQuestion(index)}>
+                <FontAwesomeIcon icon={faTrash} />
+              </Button>
+            </Col>
+          </Row>
+        ))}
+      </div>
+      <div className="mt-3">
+        <Button
+          variant="primary"
+          onClick={handleAddQuestion}
+          className="w-full"
         >
-          <Button onClick={handleSettings} variant='outline-primary'>Settings Slot</Button>
+          <FontAwesomeIcon icon={faAdd} className="mr-2" />
+          Add Question
+        </Button>
+      </div>
+    </>
+  );
+}
+
+function SlotSettingsEditor({ slot, onSubmit }) {
+  const [slotNumber, setSlotNumber] = useState(slot.slotNumber);
+  const [description, setDescription] = useState(slot.description);
+  const [questions, setQuestions] = useState(slot.questions);
+  const [validated, setValidated] = useState(false);
+
+  function handleSubmit(event) {
+    event.preventDefault();
+    event.stopPropagation();
+    setValidated(true);
+
+    if (!event.currentTarget.checkValidity()) {
+      return;
+    }
+
+    onSubmit({ slotNumber, description, questions });
+  }
+
+  return (
+    <Modal show={true}>
+      <Modal.Header>
+        <Modal.Title>Slot Settings</Modal.Title>
+      </Modal.Header>
+      <Form noValidate onSubmit={handleSubmit} validated={validated}>
+        <Modal.Body className="space-y-3">
+          <Form.Group>
+            <Form.Label>Slot Number</Form.Label>
+            <Form.Control
+              type="number"
+              min={1}
+              placeholder="Slot Number"
+              defaultValue={slot.slotNumber}
+              required
+            />
+            <Form.Control.Feedback type="invalid">
+              Slot Number is required and must start at 1.
+            </Form.Control.Feedback>
+          </Form.Group>
+          <Form.Group>
+            <Form.Label>Description</Form.Label>
+            <Form.Control
+              placeholder="Description"
+              defaultValue={slot.description}
+              as="textarea"
+              onChange={(e) => setDescription(e.target.value)}
+            />
+          </Form.Group>
+          <Form.Group>
+            <Form.Label>Questions</Form.Label>
+            <QuestionsEditor questions={questions} onChange={setQuestions} />
+          </Form.Group>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={() => onSubmit(null)}>
+            Close
+          </Button>
+          <Button variant="primary" type="submit">
+            Save changes
+          </Button>
+        </Modal.Footer>
+      </Form>
+    </Modal>
+  );
+}
+
+function List() {
+  const { slots, updateSlot } = useContext(SubjectDetailContext);
+  const [currentSlot, setCurrentSlot] = useState(null);
+
+  function openSlot(event, slot) {
+    event.stopPropagation();
+    setCurrentSlot(slot);
+  }
+
+  async function saveSlot(slot) {
+    setCurrentSlot(null);
+
+    if (!slot) {
+      return;
+    }
+
+    try {
+      await updateSlot(currentSlot.id, slot);
+    } catch (error) {
+      if (error instanceof DomainError) {
+        alert(error.message);
+      } else {
+        throw error;
+      }
+    }
+  }
+
+  return (
+    <div className="space-y-3">
+      { currentSlot && <SlotSettingsEditor slot={currentSlot} onSubmit={saveSlot} /> }
+      {slots.map((slot) => (
+        <SlotListing key={slot.id} slot={slot}>
+          <Button variant="outline-primary" onClick={(event) => openSlot(event, slot)}>Settings Slot</Button>
         </SlotListing>
       ))}
     </div>
+  );
 }
 
 function Heading({ children }) {
-  return <h1 className='text-xl font-bold text-uppercase'>{children}</h1>
+  return <h1 className="text-xl font-bold text-uppercase">{children}</h1>;
+}
+
+function GeneralEditForm({ subject }) {
+  const { updateSubject } = useContext(SubjectDetailContext);
+
+  const [name, setName] = useState(subject.name);
+  const [semesterNumber, setSemesterNumber] = useState(subject.semesterNumber);
+  const [validated, setValidated] = useState(false);
+
+  async function handleSubmit(event) {
+    event.preventDefault();
+    event.stopPropagation();
+    setValidated(true);
+
+    if (!event.currentTarget.checkValidity()) {
+      return;
+    }
+
+    try {
+      await updateSubject({ name, semesterNumber });
+      alert("Subject updated successfully");
+    } catch (err) {
+      if (err instanceof DomainError) {
+        alert(err.message);
+        return;
+      } else {
+        throw err;
+      }
+    }
+  }
+
+  return (
+    <Form noValidate onSubmit={handleSubmit} validated={validated}>
+      <Form.Group className="mb-3">
+        <Form.Label>Subject Name</Form.Label>
+        <Form.Control required value={name} type="text" placeholder="Subject Name" onChange={(e) => setName(e.target.value)} />
+        <Form.Control.Feedback type="invalid">Subject name is required</Form.Control.Feedback>
+      </Form.Group>
+      <Form.Group className="mb-3">
+        <Form.Label>Semester</Form.Label>
+        <Form.Select onChange={(e) => setSemesterNumber(e.target.value)} value={semesterNumber}>
+          <option value="1">1</option>
+          <option value="2">2</option>
+          <option value="3">3</option>
+          <option value="4">4</option>
+          <option value="5">5</option>
+          <option value="6">6</option>
+          <option value="7">7</option>
+          <option value="8">8</option>
+        </Form.Select>
+      </Form.Group>
+      <Button variant="primary" type="submit">
+        Save
+      </Button>
+    </Form>
+  );
+}
+
+function Content({ menu }) {
+  const { subject, createSlot } = useContext(SubjectDetailContext);
+
+  async function handleCreateSlot() {
+    await createSlot();
+  }
+
+  if (menu === "general" && subject) {
+    return (
+      <Card>
+        <Card.Header className="flex justify-between">
+          <Heading>
+            <FontAwesomeIcon icon={faCog} className="mr-2" />
+            General
+          </Heading>
+        </Card.Header>
+        <Card.Body>
+          <GeneralEditForm subject={subject} />
+        </Card.Body>
+      </Card>
+    );
+  } else if (menu === "slot-templates") {
+    return (
+      <Card>
+        <Card.Header className="flex justify-between">
+          <Heading>
+            <FontAwesomeIcon icon={faBook} className="mr-2" />
+            Slot Templates
+          </Heading>
+          <Button variant="primary" onClick={handleCreateSlot}>
+            <FontAwesomeIcon icon={faAdd} className="mr-2" />
+            Add Slot Template
+          </Button>
+        </Card.Header>
+        <Card.Body>
+          <List />
+        </Card.Body>
+      </Card>
+    );
+  }
+}
+
+function Wrapper({ children }) {
+  const [subject, setSubject] = useState(null);
+  const [slots, setSlots] = useState([]);
+  const { id } = useParams();
+
+  useEffect(() => {
+    subjectsService.getSubjectById(id).then(setSubject);
+    subjectsService.getAllSlots(id).then(setSlots);
+  }, []);
+
+  async function updateSubject({ name, semesterNumber }) {
+    const subject = await subjectsService.updateSubject(id, { name, semesterNumber });
+    setSubject(subject);
+  }
+
+  async function updateSlot(id, slot) {
+    const updatedSlot = await subjectsService.updateSlot(id, slot);
+    setSlots(slots.map((s) => (s.id === id ? updatedSlot : s)));
+  }
+
+  async function createSlot() {
+    const slot = await subjectsService.createSlot(id);
+    setSlots([...slots, slot]);
+  }
+
+  return (
+    <SubjectDetailContext.Provider value={{ slots, subject, updateSubject, createSlot, updateSlot }}>
+      {children}
+    </SubjectDetailContext.Provider>
+  );
 }
 
 export default function AdminSubjectDetailPage() {
+  const [menu, setMenu] = useState("general");
+
   return (
-    <>
+    <Wrapper>
       <Link to="/admin/subjects" className="text-blue-500">
         <FontAwesomeIcon icon={faArrowLeft} className="mr-2" />
         Back
@@ -227,24 +335,25 @@ export default function AdminSubjectDetailPage() {
               Menu
             </Heading>
           </Card.Header>
-          <Card.Body></Card.Body>
-        </Card>
-        <Card>
-          <Card.Header className="flex justify-between">
-            <Heading>
-              <FontAwesomeIcon icon={faBook} className="mr-2" />
-              Slots
-            </Heading>
-            <Button variant="primary">
-              <FontAwesomeIcon icon={faAdd} className="mr-2" />
-              Add Slot
-            </Button>
-          </Card.Header>
           <Card.Body>
-            <List />
+            <ListGroup>
+              <ListGroup.Item
+                active={menu === "general"}
+                onClick={() => setMenu("general")}
+              >
+                General
+              </ListGroup.Item>
+              <ListGroup.Item
+                active={menu === "slot-templates"}
+                onClick={() => setMenu("slot-templates")}
+              >
+                Slot Templates
+              </ListGroup.Item>
+            </ListGroup>
           </Card.Body>
         </Card>
+        <Content menu={menu} />
       </main>
-    </>
+    </Wrapper>
   );
 }

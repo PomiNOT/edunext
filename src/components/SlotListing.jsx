@@ -1,7 +1,7 @@
 import { Accordion, Card } from 'react-bootstrap';
 
 
-function QuestionItem({
+export function QuestionItem({
   content = "Question",
   started = false,
   showStatus,
@@ -26,9 +26,7 @@ function QuestionItem({
 }
 
 export default function SlotListing({
-  slotNumber,
-  content,
-  questions,
+  slot,
   children,
   showStatus = true,
 }) {
@@ -41,9 +39,10 @@ export default function SlotListing({
           </div>
           <div className='flex-1'>
             <h2 className="rounded text-blue-500 bg-blue-200 p-2 font-bold inline-block">
-              Slot {slotNumber}
+              Slot {slot.slotNumber}
             </h2>
-            <p className="font-bold text-justify mt-3">{content}</p>
+            { slot.description && <p className="font-bold text-justify mt-3 whitespace-pre-wrap">{slot.description}</p> }
+            { !slot.description && <p className="italic mt-3">No description</p> }
           </div>
         </Accordion.Header>
         <Accordion.Body className="p-0">
@@ -52,13 +51,22 @@ export default function SlotListing({
               Question
             </Card.Header>
             <Card.Body className="space-y-3">
-              {questions.map((question) => (
-                <QuestionItem
-                  content={question.content}
-                  started={question.started}
-                  showStatus={showStatus}
-                />
-              ))}
+              {slot.questions.map((question) => {
+                if (typeof question === "string") {
+                  return <QuestionItem
+                    content={question}
+                    started={false}
+                    showStatus={false}
+                  />;
+                } else if (typeof question === "object") {
+                  return <QuestionItem
+                    content={question.content}
+                    started={question.started}
+                    showStatus={showStatus}
+                  />;
+                }
+              })}
+              {slot.questions.length === 0 && <p>No questions</p>}
             </Card.Body>
           </Card>
         </Accordion.Body>
