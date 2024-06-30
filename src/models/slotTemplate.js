@@ -40,6 +40,10 @@ export class SlotTemplate {
     } else {
       this.#slotNumber = no;
     }
+
+    if (this.#slotNumber < 1) {
+      throw new DomainError("Slot number must be greater than 0");
+    }
   }
 
   set subjectId(id) {

@@ -112,6 +112,7 @@ function SlotSettingsEditor({ slot, onSubmit }) {
               min={1}
               placeholder="Slot Number"
               defaultValue={slot.slotNumber}
+              onChange={(e) => setSlotNumber(e.target.value)}
               required
             />
             <Form.Control.Feedback type="invalid">
@@ -146,7 +147,7 @@ function SlotSettingsEditor({ slot, onSubmit }) {
 }
 
 function List() {
-  const { slots, updateSlot } = useContext(SubjectDetailContext);
+  const { slots, updateSlot, deleteSlot } = useContext(SubjectDetailContext);
   const [currentSlot, setCurrentSlot] = useState(null);
 
   function openSlot(event, slot) {
@@ -172,12 +173,33 @@ function List() {
     }
   }
 
+  async function handleDeleteSlot(event, id) {
+    event.stopPropagation();
+
+    if (!window.confirm("Are you sure you want to delete this slot?")) {
+      return;
+    }
+
+    try {
+      await deleteSlot(id);
+    } catch (error) {
+      if (error instanceof DomainError) {
+        alert(error.message);
+      } else {
+        throw error;
+      }
+    }
+  }
+
   return (
     <div className="space-y-3">
       { currentSlot && <SlotSettingsEditor slot={currentSlot} onSubmit={saveSlot} /> }
       {slots.map((slot) => (
         <SlotListing key={slot.id} slot={slot}>
-          <Button variant="outline-primary" onClick={(event) => openSlot(event, slot)}>Settings Slot</Button>
+          <div className="space-x-2">
+            <Button variant="outline-danger" onClick={(event) => handleDeleteSlot(event, slot.id)}>Delete Slot</Button>
+            <Button variant="outline-primary" onClick={(event) => openSlot(event, slot)}>Settings Slot</Button>
+          </div>
         </SlotListing>
       ))}
     </div>
@@ -311,8 +333,13 @@ function Wrapper({ children }) {
     setSlots([...slots, slot]);
   }
 
+  async function deleteSlot(id) {
+    await subjectsService.deleteSlot(id);
+    setSlots(slots.filter((s) => s.id !== id));
+  }
+
   return (
-    <SubjectDetailContext.Provider value={{ slots, subject, updateSubject, createSlot, updateSlot }}>
+    <SubjectDetailContext.Provider value={{ slots, subject, updateSubject, createSlot, updateSlot, deleteSlot }}>
       {children}
     </SubjectDetailContext.Provider>
   );

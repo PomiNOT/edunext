@@ -12,7 +12,7 @@
   "subjects": [
     {
       "name": "CSD201",
-      "semesterNumber": 3,
+      "semesterNumber": 1,
       "id": 1
     }
   ],
@@ -20,17 +20,6 @@
     {
       "subjectId": 1,
       "slotNumber": 1,
-      "description": "Course Introduction\n\n1.1. Using Arrays\n1.2. Singly Linked Lists",
-      "questions": [
-        "Who is Mr. Beast?",
-        "Who are you?",
-        "How are you today?"
-      ],
-      "id": 1
-    },
-    {
-      "subjectId": 1,
-      "slotNumber": 2,
       "description": "1.3. Circularly Linked Lists\n1.4. Doubly Linked Lists",
       "questions": [
         "What is a priority queue?",
@@ -49,6 +38,15 @@
         "What Is the difference between lossy and lossless compression?"
       ],
       "id": 3
+    },
+    {
+      "subjectId": 1,
+      "slotNumber": 4,
+      "description": "6.7 Linear-Time Sorting: Bucket-Sort and Radix-Sort\n6.8 Comparing Sorting Algorithms",
+      "questions": [
+        "What the hell is that?"
+      ],
+      "id": 4
     }
   ]
 }

@@ -91,3 +91,7 @@ export async function updateSlot(slotId, { slotNumber, description, questions })
   slotModel.fromObject(response.data);
   return slotModel;
 }
+
+export async function deleteSlot(slotId) {
+  await client.delete(`slot_templates/${slotId}`);
+}
