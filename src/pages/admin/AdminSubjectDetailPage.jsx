@@ -293,11 +293,11 @@ function Content({ menu }) {
         <Card.Header className="flex justify-between">
           <Heading>
             <FontAwesomeIcon icon={faBook} className="mr-2" />
-            Slot Templates
+            Slots
           </Heading>
           <Button variant="primary" onClick={handleCreateSlot}>
             <FontAwesomeIcon icon={faAdd} className="mr-2" />
-            Add Slot Template
+            Add Slot
           </Button>
         </Card.Header>
         <Card.Body>
@@ -374,7 +374,7 @@ export default function AdminSubjectDetailPage() {
                 active={menu === "slot-templates"}
                 onClick={() => setMenu("slot-templates")}
               >
-                Slot Templates
+                Slots
               </ListGroup.Item>
             </ListGroup>
           </Card.Body>

@@ -13,7 +13,7 @@ export async function getAll() {
 }
 
 export async function getAllSlots(subjectId) {
-  const response = await client.get('slot_templates', {
+  const response = await client.get('slots', {
     params: {
       subjectId,
       _sort: 'slotNumber',
@@ -57,7 +57,7 @@ export async function createSubject({ name, semesterNumber }) {
 }
 
 async function getMaxSlotNumber(subjectId) {
-  const response = await client.get('slot_templates', {
+  const response = await client.get('slots', {
     params: {
       subjectId,
       _sort: 'slotNumber',
@@ -74,7 +74,7 @@ export async function createSlot(subjectId) {
   slotModel.subjectId = subjectId;
   slotModel.slotNumber = await getMaxSlotNumber(subjectId) + 1;
 
-  const response = await client.post("slot_templates", slotModel.toObject());
+  const response = await client.post("slots", slotModel.toObject());
   slotModel.fromObject(response.data);
 
   return slotModel;
@@ -87,11 +87,11 @@ export async function updateSlot(slotId, { slotNumber, description, questions })
   slotModel.description = description;
   slotModel.questions = questions;
 
-  const response = await client.patch(`slot_templates/${slotId}`, slotModel.toObject());
+  const response = await client.patch(`slots/${slotId}`, slotModel.toObject());
   slotModel.fromObject(response.data);
   return slotModel;
 }
 
 export async function deleteSlot(slotId) {
-  await client.delete(`slot_templates/${slotId}`);
+  await client.delete(`slots/${slotId}`);
 }

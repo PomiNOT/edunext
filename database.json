@@ -7,12 +7,6 @@
       "id": 1
     },
     {
-      "username": "toanldh3",
-      "password": "$2a$10$OAcFWTNY..JuQZ2HLjQK5epL421GYdgkqmFc218HZqcEev0raRU5W",
-      "role": "teacher",
-      "id": 2
-    },
-    {
       "username": "namdvhe123456",
       "password": "$2a$10$YzkJKqtpVf2tb8T/dmEymO6q5u0MG3YZrbWeRYqyY6ePHHI.C63CK",
       "role": "student",
@@ -29,6 +23,24 @@
       "password": "$2a$10$RJodkYtTCxTxK5yzIiPCceq0Tmam6yvcuT01KVk4tjH/zoZ7HvhIy",
       "role": "student",
       "id": 5
+    },
+    {
+      "username": "dungdh24",
+      "password": "$2a$10$g4ID78ELt7eV16ibQ81OxOL/J7Jcj0I3TcCIXhXMDzDCfZeEHJtbm",
+      "role": "teacher",
+      "id": 6
+    },
+    {
+      "username": "toanlh5",
+      "password": "$2a$10$emQV2Mlh5wD4LX1V7B7Qx.yHy03PSA2LSzOdoXCDiIgsaepD78ED6",
+      "role": "teacher",
+      "id": 7
+    },
+    {
+      "username": "chamhet",
+      "password": "$2a$10$hAbHTyV/sDCyIR.UdBKnZObEHwncRedT4OIx59eETjt92IEA.FBKK",
+      "role": "teacher",
+      "id": 8
     }
   ],
   "subjects": [
@@ -41,15 +53,34 @@
   "classes": [
     {
       "subjectId": 1,
-      "id": 1,
-      "name": "CSD201-1",
-      "userId": 2,
+      "userId": 6,
       "studentIds": [
-        3
-      ]
+        3,
+        4
+      ],
+      "name": "CSD201-1",
+      "id": 1
     }
   ],
-  "slot_templates": [
+  "groups": [
+    {
+      "classId": 1,
+      "studentIds": [
+        3,
+        4
+      ],
+      "name": "CSD201-1-A",
+      "id": 1
+    }
+  ],
+  "activitys": [
+    {
+      "slotId": 2,
+      "classId": 1,
+      "started": false
+    }
+  ],
+  "slots": [
     {
       "subjectId": 1,
       "slotNumber": 1,

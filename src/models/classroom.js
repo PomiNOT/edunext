@@ -105,10 +105,10 @@ export class Classroom {
   fromObject(obj) {
     this.id = obj.id;
     this.subjectId = obj.subjectId;
-    this.#subjectName = obj.subject.name;
+    this.#subjectName = obj.subject?.name ?? 'Unknown Subject';
     this.name = obj.name;
     this.teacherId = obj.userId;
-    this.#teacherName = obj.user.username;
+    this.#teacherName = obj.user?.username ?? 'Unknown Teacher';
     this.studentIds = obj.studentIds;
   }
 }

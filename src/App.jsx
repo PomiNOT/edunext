@@ -1,4 +1,6 @@
 import UserContextComponent from "./context/UserContextComponent";
+import ClientPage from "./pages/client/ClientPage";
+import ClientSubjectListPage from "./pages/client/ClientSubjectListPage";
 import AdminPage from "./pages/admin/AdminPage";
 import AdminSubjectPage from "./pages/admin/AdminSubjectPage";
 import AdminUsersPage from "./pages/admin/AdminUsersPage";
@@ -35,6 +37,11 @@ export default function App() {
             <Route path="subjects/:id" element={<AdminSubjectDetailPage />} />
             <Route path="users" element={<AdminUsersPage />} />
             <Route path="classes" element={<AdminClassesPage />} />
+          </Route>
+        </Route>
+        <Route element={<ProtectedRoute roles={["teacher", "student"]} />}>
+          <Route path="/client" element={<ClientPage />}>
+            <Route path="subjects" element={<ClientSubjectListPage />} />
           </Route>
         </Route>
       </Routes>
