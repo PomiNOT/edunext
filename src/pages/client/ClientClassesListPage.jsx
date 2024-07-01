@@ -1,5 +1,6 @@
 import { useContext, useEffect, useState } from "react";
 import { Container, Card } from "react-bootstrap";
+import { Link } from "react-router-dom";
 import { faUserCircle, faIdCard, faSchool, faArrowRight } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { UserContext } from "../../context/UserContextComponent";
@@ -60,7 +61,9 @@ export default function ClientClassesListPage() {
         <h1 className="font-bold text-3xl mb-4">Courses</h1>
         <div className="grid grid-cols-1 md:grid-cols-3 xl:grid-cols-5 gap-3">
           {classes.map((classroom) => (
-            <ClassroomCard key={classroom.id} classroom={classroom} />
+            <Link to={`/client/classes/${classroom.id}`} key={classroom.id}>
+              <ClassroomCard key={classroom.id} classroom={classroom} />
+            </Link>
           ))}
         </div>
       </Container>
