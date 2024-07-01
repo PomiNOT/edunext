@@ -16,6 +16,36 @@ export async function getAll() {
   });
 }
 
+export async function getClassesForTeacher(teacherId) {
+  const response = await client.get("classes", {
+    params: {
+      _expand: ["subject", "user"],
+      userId: teacherId
+    },
+  });
+
+  return response.data.map((classroom) => {
+    const classroomModel = new Classroom();
+    classroomModel.fromObject(classroom);
+    return classroomModel;
+  })
+}
+
+export async function getClassesForStudent(studentId) {
+  const response = await client.get("classes", {
+    params: {
+      _expand: ["subject", "user"],
+      'studentIds_like': studentId
+    },
+  });
+
+  return response.data.map((classroom) => {
+    const classroomModel = new Classroom();
+    classroomModel.fromObject(classroom);
+    return classroomModel;
+  })
+}
+
 async function getClassById(id) {
   const response = await client.get(`classes/${id}`, {
     params: {

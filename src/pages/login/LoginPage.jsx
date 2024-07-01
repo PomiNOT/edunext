@@ -82,7 +82,7 @@ export default function LoginPage() {
       return <Navigate to="/admin/subjects" />;
     case "teacher":
     case "student":
-      return <Navigate to="/client/subjects" />;
+      return <Navigate to="/client/classes" />;
   }
 
   return (
