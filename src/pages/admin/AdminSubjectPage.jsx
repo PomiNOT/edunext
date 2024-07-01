@@ -22,8 +22,8 @@ import { Link } from "react-router-dom";
 const SubjectsManagementContext = createContext();
 
 const headers = [
-  { title: "Subject Name", prop: "name", isFiterable: true, isSortable: true },
-  { title: "Semester", prop: "semesterNumber", isFilterable: true, isSortable: true },
+  { title: "Subject Name", prop: "name", isFilterable: true, isSortable: true },
+  { title: "Semester", prop: "semesterNumber", isSortable: true },
   {
     title: "Details",
     prop: "id",
@@ -186,7 +186,7 @@ function SubjectsTable() {
           <Card.Body>
             <Row className="mb-4 align-items-end">
               <Col xs={5}>
-                <Filter />
+                <Filter placeholder="Subject Name" />
               </Col>
               <Col xs={5}>
                 <PaginationOptions />

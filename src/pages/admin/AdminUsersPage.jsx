@@ -8,7 +8,7 @@ import {
 } from "react-bs-datatable";
 import { useState, useEffect, createContext, useContext } from "react";
 import { Col, Row, Table, Button, Form, Modal } from "react-bootstrap";
-import * as auth from "../../services/auth";
+import * as usersService from "../../services/users";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faUser,
@@ -22,8 +22,8 @@ import { DomainError } from "../../services/errors";
 const UsersManagementContext = createContext();
 
 const headers = [
-  { title: "Username", prop: "username", isFiterable: true, isSortable: true },
-  { title: "Role", prop: "role", isFilterable: true, isSortable: true },
+  { title: "Username", prop: "username", isFilterable: true, isSortable: true },
+  { title: "Role", prop: "role", isSortable: true },
   {
     title: "Actions",
     prop: "id",
@@ -241,7 +241,7 @@ function Wrapper({ children }) {
   const [users, setUsers] = useState([]);
 
   useEffect(() => {
-    auth.getAll().then(setUsers);
+    usersService.getAll().then(setUsers);
   }, []);
 
   async function registerUser(user) {
@@ -249,7 +249,7 @@ function Wrapper({ children }) {
       return;
     }
 
-    const newUser = await auth.register(
+    const newUser = await usersService.register(
       user.username,
       user.password,
       user.role
@@ -258,12 +258,12 @@ function Wrapper({ children }) {
   }
 
   async function deleteUser(id) {
-    await auth.deleteUser(id);
+    await usersService.deleteUser(id);
     setUsers(users.filter((user) => user.id !== id));
   }
 
   async function changePassword(id, password) {
-    await auth.changePassword(id, password);
+    await usersService.changePassword(id, password);
   }
 
   return (
@@ -308,7 +308,7 @@ function UsersTable() {
           <Card.Body>
             <Row className="mb-4 align-items-end">
               <Col xs={5}>
-                <Filter />
+                <Filter placeholder="Username" />
               </Col>
               <Col xs={5}>
                 <PaginationOptions />

@@ -2,6 +2,7 @@ import UserContextComponent from "./context/UserContextComponent";
 import AdminPage from "./pages/admin/AdminPage";
 import AdminSubjectPage from "./pages/admin/AdminSubjectPage";
 import AdminUsersPage from "./pages/admin/AdminUsersPage";
+import AdminClassesPage from "./pages/admin/AdminClassesPage";
 import LoginPage from "./pages/login/LoginPage";
 import {
   BrowserRouter,
@@ -33,6 +34,7 @@ export default function App() {
             <Route path="subjects" element={<AdminSubjectPage />} />
             <Route path="subjects/:id" element={<AdminSubjectDetailPage />} />
             <Route path="users" element={<AdminUsersPage />} />
+            <Route path="classes" element={<AdminClassesPage />} />
           </Route>
         </Route>
       </Routes>

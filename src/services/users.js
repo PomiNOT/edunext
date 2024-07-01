@@ -1,10 +1,21 @@
 import { client } from "./client";
 import { AuthUser } from "../models/authUser";
 import { DomainError } from "./errors";
-import { createStudent, deleteStudent } from "./students";
 
 export async function getAll() {
   const response = await client.get("users");
+
+  return response.data.map((user) => {
+    const authUser = new AuthUser();
+    authUser.fromObject(user);
+    return authUser;
+  });
+}
+
+export async function getAllByRole(role) {
+  const response = await client.get("users", {
+    params: { role },
+  });
 
   return response.data.map((user) => {
     const authUser = new AuthUser();
@@ -29,31 +40,9 @@ export async function register(username, password, role) {
 
   response = await client.post("users", user.toObject());
 
-  await createPersonByRole(response.data.id, username, role);
-
   const authUser = new AuthUser();
   authUser.fromObject(response.data);
   return authUser;
-}
-
-async function deletePersonByRole(userId) {
-  switch (getCurrentUser().role) {
-    case "student":
-      return deleteStudent(userId);
-    default:
-      console.log(`Unknown role: ${getCurrentUser().role}`);
-      break;
-  }
-}
-
-async function createPersonByRole(userId, username, role) {
-  switch (role) {
-    case "student":
-      return createStudent({ userId, fullName: username, semesterNumber: 1 });
-    default:
-      console.log(`Unknown role: ${role}`);
-      break;
-  }
 }
 
 export async function changePassword(id, password) {
@@ -80,7 +69,7 @@ export async function deleteUser(id) {
   }
 
   try {
-    const response = await client.delete(`users/${id}`);
+    await client.delete(`users/${id}`);
   } catch (err) {
     if (err.response.status === 404) {
       throw new DomainError("User not found");
@@ -88,8 +77,6 @@ export async function deleteUser(id) {
       throw err;
     }
   }
-
-  await deletePersonByRole(id);
 }
 
 /** @returns {AuthUser | null} the user */

@@ -35,11 +35,8 @@ export default function AdminPage() {
               <Nav.Link as={Link} className="text-light" to="/admin/users">
                 Users
               </Nav.Link>
-              <Nav.Link as={Link} className="text-light" to="/admin/teachers">
-                Teachers
-              </Nav.Link>
-              <Nav.Link as={Link} className="text-light" to="/admin/students">
-                Students
+              <Nav.Link as={Link} className="text-light" to="/admin/classes">
+                Classes
               </Nav.Link>
             </Nav>
             <DropdownButton
