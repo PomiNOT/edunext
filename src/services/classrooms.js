@@ -15,3 +15,27 @@ export async function getAll() {
     return classroomModel;
   });
 }
+
+async function getClassById(id) {
+  const response = await client.get(`classes/${id}`, {
+    params: {
+      _expand: ["subject", "user"]
+    },
+  });
+
+  const ret = new Classroom();
+  ret.fromObject(response.data);
+  return ret;
+}
+
+export async function createClass({ name, teacherId, subjectId, studentIds }) {
+  const classroom = new Classroom();
+  classroom.name = name;
+  classroom.teacherId = teacherId;
+  classroom.subjectId = subjectId;
+  classroom.studentIds = studentIds;
+
+  const response = await client.post("classes", classroom.toObject());
+
+  return await getClassById(response.data.id);
+}

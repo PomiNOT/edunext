@@ -6,7 +6,7 @@ import {
   TableBody,
   TableHeader,
 } from "react-bs-datatable";
-import { Col, Row, Table, Button, Card, Modal, Form } from "react-bootstrap";
+import { Col, Row, Table, Button, Card, Modal, Form, Tab, Tabs } from "react-bootstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faBook,
@@ -17,6 +17,7 @@ import { createContext, useContext } from "react";
 import * as classesService from "../../services/classrooms";
 import * as usersService from "../../services/users";
 import * as subjectsService from "../../services/subjects";
+import { DomainError } from "../../services/errors";
 
 const AdminClassesContext = createContext();
 
@@ -24,8 +25,14 @@ function CreateClassModal({ onDone }) {
   const [validated, setValidated] = useState(false);
   const [teachers, setTeachers] = useState([]);
   const [subjects, setSubjects] = useState([]);
+  const [students, setStudents] = useState([]);
+  const [name, setName] = useState("");
+  const [teacherId, setTeacherId] = useState("");
+  const [subjectId, setSubjectId] = useState("");
+  const [studentsSelectionMap, setStudentsSelectionMap] = useState({});
+  const { createClass } = useContext(AdminClassesContext);
 
-  function handleOnSubmit(event) {
+  async function handleOnSubmit(event) {
     event.preventDefault();
     event.stopPropagation();
     setValidated(true);
@@ -34,13 +41,45 @@ function CreateClassModal({ onDone }) {
       return;
     }
 
+    const studentIds = Object.keys(studentsSelectionMap).filter(
+      (studentId) => studentsSelectionMap[studentId]
+    );
+
+    if (studentIds.length === 0) {
+      alert("Please select at least one student");
+      return;
+    }
+
+    try {
+      await createClass({
+        name,
+        teacherId,
+        subjectId,
+        studentIds,
+      });
+    } catch (err) {
+      if (err instanceof DomainError) {
+        alert(err.message);
+        return;
+      } else {
+        throw err;
+      }
+    }
+
     onDone();
   }
 
   useEffect(() => {
     usersService.getAllByRole("teacher").then(setTeachers);
+    usersService.getAllByRole("student").then(setStudents);
     subjectsService.getAll().then(setSubjects);
   }, []);
+
+  function toggle(studentId) {
+    const newMap = { ...studentsSelectionMap };
+    newMap[studentId] = studentsSelectionMap[studentId] ? false : true;
+    setStudentsSelectionMap(newMap);
+  }
 
   return (
     <Modal show={true}>
@@ -48,57 +87,89 @@ function CreateClassModal({ onDone }) {
         <Modal.Title>Create Class</Modal.Title>
       </Modal.Header>
       <Form noValidate validated={validated} onSubmit={handleOnSubmit}>
+        <Modal.Body>
+          <Tabs defaultActiveKey="general" className="mb-3">
+            <Tab eventKey="general" title="General">
+              <Form.Group>
+                <Form.Label>Class Name</Form.Label>
+                <Form.Control
+                  type="text"
+                  placeholder="Class Name"
+                  required
+                  value={name}
+                  onChange={(event) => setName(event.target.value)}
+                />
+                <Form.Control.Feedback type="invalid">
+                  Class name is required
+                </Form.Control.Feedback>
+              </Form.Group>
 
-      <Modal.Body>
-        <Form.Group>
-          <Form.Label>Class Name</Form.Label>
-          <Form.Control
-            type="text"
-            placeholder="Class Name"
-            required
-          />
-          <Form.Control.Feedback type="invalid">
-            Class name is required
-          </Form.Control.Feedback>
-        </Form.Group>
+              <Form.Group>
+                <Form.Label>Subject</Form.Label>
+                <Form.Select
+                  required
+                  onChange={(event) => setSubjectId(event.target.value)}
+                  value={subjectId}
+                >
+                  <option value="">Select Subject</option>
+                  {subjects.map((subject) => (
+                    <option key={subject.id} value={subject.id}>
+                      {subject.name}
+                    </option>
+                  ))}
+                </Form.Select>
+                <Form.Control.Feedback type="invalid">
+                  Subject is required
+                </Form.Control.Feedback>
+              </Form.Group>
 
-        <Form.Group>
-          <Form.Label>Subject</Form.Label>
-          <Form.Select required>
-            <option value="">Select Subject</option>
-            {subjects.map((subject) => (
-              <option key={subject.id} value={subject.id}>{subject.name}</option>
-            ))}
-          </Form.Select>
-          <Form.Control.Feedback type="invalid">
-            Subject is required
-          </Form.Control.Feedback>
-        </Form.Group>
+              <Form.Group>
+                <Form.Label>Teacher</Form.Label>
+                <Form.Select
+                  required
+                  onChange={(event) => setTeacherId(event.target.value)}
+                  value={teacherId}
+                >
+                  <option value="">Select Teacher</option>
+                  {teachers.map((teacher) => (
+                    <option key={teacher.id} value={teacher.id}>
+                      {teacher.username}
+                    </option>
+                  ))}
+                </Form.Select>
+                <Form.Control.Feedback type="invalid">
+                  Teacher is required
+                </Form.Control.Feedback>
+              </Form.Group>
+            </Tab>
+            <Tab eventKey="students" title="Students">
+              <Form.Group>
+                <Form.Label>Student</Form.Label>
+                {students.map((student) => (
+                  <Form.Check
+                    key={student.id}
+                    type="checkbox"
+                    label={student.username}
+                    checked={studentsSelectionMap[student.id] ? true : false}
+                    onChange={() => toggle(student.id)}
+                  />
+                ))}
+              </Form.Group>
+            </Tab>
+          </Tabs>
+        </Modal.Body>
 
-        <Form.Group>
-          <Form.Label>Teacher</Form.Label>
-          <Form.Select required>
-            <option value="">Select Teacher</option>
-            {teachers.map((teacher) => (
-              <option key={teacher.id} value={teacher.id}>
-                {teacher.username}
-              </option>
-            ))}
-          </Form.Select>
-          <Form.Control.Feedback type="invalid">
-            Teacher is required
-          </Form.Control.Feedback>
-        </Form.Group>
-      </Modal.Body>
-
-      <Modal.Footer>
-        <Button variant="secondary" onClick={() => onDone()}>Cancel</Button>
-        <Button variant="primary" type="submit">Create</Button>
-      </Modal.Footer>
-
+        <Modal.Footer>
+          <Button variant="secondary" onClick={() => onDone()}>
+            Cancel
+          </Button>
+          <Button variant="primary" type="submit">
+            Create
+          </Button>
+        </Modal.Footer>
       </Form>
     </Modal>
-  )
+  );
 }
 
 function Wrapper({ children }) {
@@ -108,8 +179,20 @@ function Wrapper({ children }) {
     classesService.getAll().then(setClasses);
   }, []);
 
+  async function createClass({ name, teacherId, subjectId, studentIds }) {
+    const theClass = await classesService.createClass({
+      name,
+      teacherId,
+      subjectId,
+      studentIds
+    });
+
+    setClasses([...classes, theClass]);
+  }
+
+
   return (
-    <AdminClassesContext.Provider value={{ classes }}>
+    <AdminClassesContext.Provider value={{ classes, createClass }}>
       {children}
     </AdminClassesContext.Provider>
   )

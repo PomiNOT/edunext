@@ -7,7 +7,11 @@ export class Classroom {
   name;
   #teacherId;
   #teacherName;
-  studentIds;
+  #studentIds;
+
+  get studentIds() {
+    return this.#studentIds;
+  }
 
   get id() {
     return this.#id;
@@ -67,6 +71,26 @@ export class Classroom {
     } else {
       this.#teacherId = id;
     }
+  }
+
+  set studentIds(ids) {
+    if (!Array.isArray(ids)) {
+      throw new DomainError("Student ids must be an array");
+    }
+
+    this.#studentIds = ids.map((id) => {
+      if (typeof id !== "number") {
+        const num = parseInt(id);
+
+        if (Number.isNaN(num)) {
+          throw new DomainError("Student id must be a number");
+        }
+
+        return num;
+      }
+
+      return id;
+    });
   }
 
   toObject() {

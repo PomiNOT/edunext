@@ -19,7 +19,7 @@ export default function AdminPage() {
     <>
       <Navbar bg="primary" expand="md">
         <Container>
-          <Navbar.Brand as={Link} className="text-light" to="/admin">
+          <Navbar.Brand className="text-light">
             Admin Dashboard
           </Navbar.Brand>
           <Navbar.Toggle

@@ -79,7 +79,7 @@ export default function LoginPage() {
 
   switch (user?.role) {
     case "admin":
-      return <Navigate to="/admin" />;
+      return <Navigate to="/admin/subjects" />;
     case "teacher":
       return <Navigate to="/teacher" />;
     case "student":

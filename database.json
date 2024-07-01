@@ -17,6 +17,18 @@
       "password": "$2a$10$YzkJKqtpVf2tb8T/dmEymO6q5u0MG3YZrbWeRYqyY6ePHHI.C63CK",
       "role": "student",
       "id": 3
+    },
+    {
+      "username": "abche19392",
+      "password": "$2a$10$6KQlEZMmDS22A.OoKhGOEe5qNrVRunoO5fSNYly7a2aZYhrFYkTbO",
+      "role": "student",
+      "id": 4
+    },
+    {
+      "username": "trollvnhe193891",
+      "password": "$2a$10$RJodkYtTCxTxK5yzIiPCceq0Tmam6yvcuT01KVk4tjH/zoZ7HvhIy",
+      "role": "student",
+      "id": 5
     }
   ],
   "subjects": [
