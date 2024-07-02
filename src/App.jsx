@@ -17,6 +17,7 @@ import { UserContext } from "./context/UserContextComponent";
 import { useContext } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import AdminSubjectDetailPage from "./pages/admin/AdminSubjectDetailPage";
+import ClientClassDetailPage from "./pages/client/ClientClassDetailPage";
 
 function ProtectedRoute({ roles }) {
   const { user } = useContext(UserContext);
@@ -42,6 +43,7 @@ export default function App() {
         <Route element={<ProtectedRoute roles={["teacher", "student"]} />}>
           <Route path="/client" element={<ClientPage />}>
             <Route path="classes" element={<ClientClassesListPage />} />
+            <Route path="classes/:id" element={<ClientClassDetailPage />} />
           </Route>
         </Route>
       </Routes>

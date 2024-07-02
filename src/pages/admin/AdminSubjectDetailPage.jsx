@@ -12,6 +12,7 @@ import { Link, useParams } from "react-router-dom";
 import { useState, useContext, createContext, useEffect } from "react";
 import { DomainError } from "../../services/errors";
 import * as subjectsService from "../../services/subjects";
+import * as getAllSlots from "../../services/slots";
 
 const SubjectDetailContext = createContext();
 
@@ -315,7 +316,7 @@ function Wrapper({ children }) {
 
   useEffect(() => {
     subjectsService.getSubjectById(id).then(setSubject);
-    subjectsService.getAllSlots(id).then(setSlots);
+    getAllSlots.getAllSlots(id).then(setSlots);
   }, []);
 
   async function updateSubject({ name, semesterNumber }) {
@@ -324,17 +325,17 @@ function Wrapper({ children }) {
   }
 
   async function updateSlot(id, slot) {
-    const updatedSlot = await subjectsService.updateSlot(id, slot);
+    const updatedSlot = await getAllSlots.updateSlot(id, slot);
     setSlots(slots.map((s) => (s.id === id ? updatedSlot : s)));
   }
 
   async function createSlot() {
-    const slot = await subjectsService.createSlot(id);
+    const slot = await getAllSlots.createSlot(id);
     setSlots([...slots, slot]);
   }
 
   async function deleteSlot(id) {
-    await subjectsService.deleteSlot(id);
+    await getAllSlots.deleteSlot(id);
     setSlots(slots.filter((s) => s.id !== id));
   }
 

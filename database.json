@@ -75,8 +75,10 @@
   ],
   "activitys": [
     {
+      "id": 1,
       "slotId": 2,
       "classId": 1,
+      "content": "What the hell is this?",
       "started": false
     }
   ],

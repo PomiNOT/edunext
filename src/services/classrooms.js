@@ -46,7 +46,7 @@ export async function getClassesForStudent(studentId) {
   })
 }
 
-async function getClassById(id) {
+export async function getClassById(id) {
   const response = await client.get(`classes/${id}`, {
     params: {
       _expand: ["subject", "user"]

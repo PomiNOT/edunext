@@ -1,6 +1,6 @@
 import { DomainError } from "../services/errors";
 
-export class SlotTemplate {
+export class Slot {
   #id;
   #subjectId;
   #slotNumber = 1;
