@@ -2,6 +2,9 @@ import UserContextComponent from "./context/UserContextComponent";
 import ClientPage from "./pages/client/ClientPage";
 import ClientClassesListPage from "./pages/client/ClientClassesListPage";
 import ClientSlotDetailPage from "./pages/client/ClientSlotDetailPage";
+import ClientClassActivityPage from "./pages/client/ClientClassActivityPage";
+import ClientClassDetailPage from "./pages/client/ClientClassDetailPage";
+import AdminSubjectDetailPage from "./pages/admin/AdminSubjectDetailPage";
 import AdminPage from "./pages/admin/AdminPage";
 import AdminSubjectPage from "./pages/admin/AdminSubjectPage";
 import AdminUsersPage from "./pages/admin/AdminUsersPage";
@@ -17,8 +20,6 @@ import {
 import { UserContext } from "./context/UserContextComponent";
 import { useContext } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
-import AdminSubjectDetailPage from "./pages/admin/AdminSubjectDetailPage";
-import ClientClassDetailPage from "./pages/client/ClientClassDetailPage";
 
 function ProtectedRoute({ roles }) {
   const { user } = useContext(UserContext);
@@ -45,6 +46,11 @@ export default function App() {
           <Route path="/client" element={<ClientPage />}>
             <Route path="classes" element={<ClientClassesListPage />} />
             <Route path="classes/:classId" element={<ClientClassDetailPage />} />
+            <Route path="activity/:activityId" element={<ClientClassActivityPage />} />
+          </Route>
+        </Route>
+        <Route element={<ProtectedRoute roles={["teacher"]} />}>
+          <Route path="/client" element={<ClientPage />}>
             <Route path="slots/:classId/:slotId" element={<ClientSlotDetailPage />} />
           </Route>
         </Route>

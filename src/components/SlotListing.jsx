@@ -5,6 +5,7 @@ export default function SlotListing({
   slot,
   children,
   showStatus = true,
+  onItemSelected,
 }) {
   return (
     <Accordion className="question-accordion">
@@ -30,12 +31,14 @@ export default function SlotListing({
               {slot.questions.map((question) => {
                 if (typeof question === "string") {
                   return <QuestionItem
+                    onClick={() => onItemSelected(question)}
                     content={question}
                     started={false}
                     showStatus={false}
                   />;
                 } else if (typeof question === "object") {
                   return <QuestionItem
+                    onClick={() => onItemSelected(question)}
                     content={question.content}
                     started={question.started}
                     showStatus={showStatus}

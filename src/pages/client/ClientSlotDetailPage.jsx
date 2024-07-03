@@ -15,6 +15,7 @@ import { Link, useParams } from "react-router-dom";
 import * as slotsService from "../../services/slots";
 import * as activitiesService from "../../services/activities";
 import { QuestionItem } from "../../components/QuestionItem";
+import { DomainError } from "../../services/errors";
 
 const ClientSlotDetailContext = createContext();
 
@@ -40,14 +41,34 @@ function TopContent() {
 }
 
 function AddNewActivityModal({ onDone }) {
+  const [activityName, setActivityName] = useState("");
+  const [loading, setLoading] = useState(false);
   const [validated, setValidated] = useState(false);
+  const { addActivity } = useContext(ClientSlotDetailContext);
 
-  function handleSubmit(event) {
+  async function handleSubmit(event) {
     event.preventDefault();
     event.stopPropagation();
     setValidated(true);
 
-    onDone();
+    if (!event.currentTarget.checkValidity()) {
+      return;
+    }
+
+    setLoading(true);
+
+    try {
+      await addActivity({ content: activityName });
+      onDone();
+    } catch (error) {
+      if (error instanceof DomainError) {
+        alert(error.message);
+      } else {
+        throw error;
+      }
+    } finally {
+      setLoading(false);
+    }
   }
 
   return (
@@ -59,7 +80,13 @@ function AddNewActivityModal({ onDone }) {
         <Modal.Body>
           <Form.Group>
             <Form.Label>Activity name</Form.Label>
-            <Form.Control required type="text" placeholder="Activity name" />
+            <Form.Control
+              required
+              type="text"
+              placeholder="Activity name"
+              value={activityName}
+              onChange={(event) => setActivityName(event.target.value)}
+            />
             <Form.Control.Feedback type="invalid">
               Activity name is required
             </Form.Control.Feedback>
@@ -69,7 +96,9 @@ function AddNewActivityModal({ onDone }) {
           <Button variant="secondary" onClick={onDone}>
             Cancel
           </Button>
-          <Button variant="primary" type="submit">Add</Button>
+          <Button variant="primary" type="submit" disabled={loading}>
+            { loading ? 'Saving...' : 'Save' }
+          </Button>
         </Modal.Footer>
       </Form>
     </Modal>
@@ -77,7 +106,8 @@ function AddNewActivityModal({ onDone }) {
 }
 
 function ImportActivitiesModal({ onDone }) {
-  const { slot } = useContext(ClientSlotDetailContext);
+  const { slot, addActivity } = useContext(ClientSlotDetailContext);
+  const [loading, setLoading] = useState(false);
   const [map, setMap] = useState(() => {
     return slot.questions.reduce((map, question, index) => {
       map[index] = {
@@ -100,9 +130,22 @@ function ImportActivitiesModal({ onDone }) {
     return Object.values(map).filter((question) => question.selected).map(({ question }) => question);
   }
 
-  function handleSubmit() {
+  async function handleSubmit() {
     const selectedQuestions = getSelectedQuestions();
-    onDone();
+
+    try {
+      await addActivity({ content: selectedQuestions });
+
+      onDone();
+    } catch (error) {
+      if (error instanceof DomainError) {
+        alert(error.message);
+      } else {
+        throw error;
+      }
+    } finally {
+      setLoading(false);
+    }
   }
 
   return (
@@ -117,6 +160,7 @@ function ImportActivitiesModal({ onDone }) {
             label={question.question}
             onChange={() => toggle(question.index)}
             checked={question.selected}
+            key={question.index}
           />
         ))}
       </Modal.Body>
@@ -131,31 +175,59 @@ function ImportActivitiesModal({ onDone }) {
 }
 
 function SlotContentList() {
-  const { activities } = useContext(ClientSlotDetailContext);
+  const { activities, startActivity, stopActivity } = useContext(ClientSlotDetailContext);
   const [showAddActivityModal, setShowAddActivityModal] = useState(false);
   const [showImportActivitiesModal, setShowImportActivitiesModal] = useState(false);
 
+  async function handleStartActivity(activityId) {
+    if (window.confirm("Are you sure you want to start this activity?")) {
+      await startActivity(activityId);
+    }
+  }
+
+  async function handleStopActivity(activityId) {
+    if (window.confirm("Are you sure you want to stop this activity?")) {
+      await stopActivity(activityId);
+    }
+  }
+
   return (
     <>
-      {showAddActivityModal && <AddNewActivityModal onDone={() => setShowAddActivityModal(false)} />}
-      {showImportActivitiesModal && <ImportActivitiesModal onDone={() => setShowImportActivitiesModal(false)} />}
+      {showAddActivityModal && (
+        <AddNewActivityModal onDone={() => setShowAddActivityModal(false)} />
+      )}
+      {showImportActivitiesModal && (
+        <ImportActivitiesModal
+          onDone={() => setShowImportActivitiesModal(false)}
+        />
+      )}
 
-      {activities.map((activity) => (
-        <div className="flex gap-3">
-          <div className="flex-1">
-            <QuestionItem
-              key={activity.id}
-              showStatus={true}
-              content={activity.content}
-              started={activity.started}
-            />
+      <div className="space-y-2">
+        {activities.map((activity) => (
+          <div className="flex gap-3" key={activity.id}>
+            <div className="flex-1">
+              <QuestionItem
+                key={activity.id}
+                showStatus={true}
+                content={activity.content}
+                started={activity.started}
+              />
+            </div>
+
+            <Button
+              onClick={
+                activity.started
+                  ? () => handleStopActivity(activity.id)
+                  : () => handleStartActivity(activity.id)
+              }
+              variant={activity.started ? "outline-danger" : "success"}
+              className="w-24"
+            >
+              {activity.started ? "End" : "Start"}
+            </Button>
           </div>
-
-          <Button variant={activity.started ? "outline-danger" : "success"}>
-            {activity.started ? "End" : "Start"}
-          </Button>
-        </div>
-      ))}
+        ))}
+      </div>
 
       {activities.length === 0 && <p>No activities found</p>}
 
@@ -198,9 +270,48 @@ function Wrapper({ children }) {
     slotsService.getSlotById(slotId).then(setSlot);
   }, []);
 
+  async function startActivity(activityId) {
+    const a = await activitiesService.startActivity(activityId);
+    const newActivities = activities.map((activity) => {
+      if (activity.id === a.id) {
+        return a;
+      }
+
+      return activity;
+    });
+    setActivities(newActivities);
+  }
+
+  async function stopActivity(activityId) {
+    const a = await activitiesService.stopActivity(activityId);
+    const newActivities = activities.map((activity) => {
+      if (activity.id === a.id) {
+        return a;
+      }
+
+      return activity;
+    });
+    setActivities(newActivities);
+  }
+
+  async function addActivity({ content }) {
+    const tasks = [];
+
+    if (typeof content === "string") {
+      tasks.push(activitiesService.addActivity({ slotId, classId, content }));
+    } else if (Array.isArray(content)) {
+      content.forEach((c) => {
+        tasks.push(activitiesService.addActivity({ slotId, classId, content: c }));
+      });
+    }
+
+    const results = await Promise.all(tasks);
+    setActivities([...activities, ...results]);
+  }
+
   return (
     <ClientSlotDetailContext.Provider
-      value={{ activities, slot }}
+      value={{ activities, slot, startActivity, stopActivity, addActivity }}
     >
       {children}
     </ClientSlotDetailContext.Provider>
@@ -215,7 +326,7 @@ export default function ClientSlotDetailPage() {
         <Container className="mt-3">
           <Card>
             <Card.Body>
-                <Content />
+              <Content />
             </Card.Body>
           </Card>
         </Container>

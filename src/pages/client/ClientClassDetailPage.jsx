@@ -1,9 +1,10 @@
 import { Breadcrumb, Form, FormControl, Button, Container, Row, Col } from 'react-bootstrap';
-import { Link, useParams } from 'react-router-dom';
+import { Link, useParams, useNavigate } from 'react-router-dom';
 import SlotListing from '../../components/SlotListing';
-import { useState, useEffect } from 'react';
+import { useContext, useState, useEffect } from 'react';
 import * as activitiesService from '../../services/activities';
 import * as classroomService from '../../services/classrooms';
+import { UserContext } from '../../context/UserContextComponent';
 
 function TopContent({ classroom }) {
   return (
@@ -37,7 +38,7 @@ function TopContent({ classroom }) {
           </Form.Group>
         </Col>
         <Col md={2} className='g-0'>
-          <Button variant="primary" className="w-full">Learning Materials</Button>
+          <Button variant="primary" className="w-full truncate">Learning Materials</Button>
         </Col>
         <Col md={2} className='g-0'>
           <Button variant="primary" className="w-full">Assignments</Button>
@@ -49,23 +50,33 @@ function TopContent({ classroom }) {
 
 export default function ClientClassDetailPage() {
   const { classId } = useParams();
+  const { user } = useContext(UserContext);
   const [slots, setSlots] = useState([]);
   const [classroom, setClassroom] = useState(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     activitiesService.getAllActivitiesGroupedBySlotForClass(classId).then(setSlots);
     classroomService.getClassById(classId).then(setClassroom);
   }, []);
 
+  function handleActivitySelected(activity) {
+    if (activity.started) {
+      navigate(`/client/activity/${activity.id}`);
+    }
+  }
+
   return (
     <div>
       <TopContent classroom={classroom} />
       <Container className="mt-3 mb-6 space-y-3">
         {slots.map((slot) => (
-          <SlotListing key={slot.id} slot={slot}>
-            <Link to={`/client/slots/${classId}/${slot.id}`}>
-              <Button variant="outline-primary">Settings Slot</Button>
-            </Link>
+          <SlotListing key={slot.id} slot={slot} onItemSelected={handleActivitySelected}>
+            {user.role === "teacher" && (
+              <Link to={`/client/slots/${classId}/${slot.id}`}>
+                <Button variant="outline-primary">Settings Slot</Button>
+              </Link>
+            )}
           </SlotListing>
         ))}
       </Container>

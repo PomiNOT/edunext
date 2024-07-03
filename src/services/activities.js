@@ -47,3 +47,38 @@ export async function getAllActivitiesForSlotByClass(slotId, classId) {
 
   return activities;
 }
+
+export async function startActivity(activityId) {
+  const response = await client.patch(`activitys/${activityId}`, { started: true });
+  const activity = new Activity();
+  activity.fromObject(response.data);
+  return activity;
+}
+
+export async function stopActivity(activityId) {
+  const response = await client.patch(`activitys/${activityId}`, { started: false });
+  const activity = new Activity();
+  activity.fromObject(response.data);
+  return activity;
+}
+
+export async function addActivity({ slotId, classId, content }) {
+  const activity = new Activity();
+  activity.slotId = slotId;
+  activity.classId = classId;
+  activity.content = content;
+  activity.started = false;
+
+  const response = await client.post("activitys", activity.toObject());
+  const activityModel = new Activity();
+  activityModel.fromObject(response.data);
+
+  return activityModel;
+}
+
+export async function getActivityById(activityId) {
+  const response = await client.get(`activitys/${activityId}`);
+  const activityModel = new Activity();
+  activityModel.fromObject(response.data);
+  return activityModel;
+}

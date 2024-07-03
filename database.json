@@ -46,7 +46,7 @@
   "subjects": [
     {
       "name": "CSD201",
-      "semesterNumber": 1,
+      "semesterNumber": 4,
       "id": 1
     }
   ],
@@ -86,11 +86,46 @@
   ],
   "activitys": [
     {
-      "id": 1,
+      "slotId": 3,
+      "classId": 2,
+      "content": "nice",
+      "started": true,
+      "id": 1
+    },
+    {
+      "slotId": 2,
+      "classId": 2,
+      "content": "What is a priority queue?",
+      "started": false,
+      "id": 2
+    },
+    {
+      "slotId": 2,
+      "classId": 2,
+      "content": "What is recursive?",
+      "started": false,
+      "id": 3
+    },
+    {
       "slotId": 2,
       "classId": 1,
-      "content": "What the hell is this?",
-      "started": false
+      "content": "What is a priority queue?",
+      "started": true,
+      "id": 4
+    },
+    {
+      "slotId": 2,
+      "classId": 1,
+      "content": "What is recursive?",
+      "started": true,
+      "id": 5
+    },
+    {
+      "slotId": 3,
+      "classId": 1,
+      "content": "How many ways to resolve collisions in hashing?",
+      "started": true,
+      "id": 6
     }
   ],
   "slots": [
@@ -100,8 +135,7 @@
       "description": "1.3. Circularly Linked Lists\n1.4. Doubly Linked Lists",
       "questions": [
         "What is a priority queue?",
-        "What is recursive?",
-        "Something here"
+        "What is recursion?"
       ],
       "id": 2
     },
