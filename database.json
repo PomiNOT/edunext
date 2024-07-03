@@ -60,6 +60,17 @@
       ],
       "name": "CSD201-1",
       "id": 1
+    },
+    {
+      "subjectId": 1,
+      "userId": 6,
+      "studentIds": [
+        3,
+        4,
+        5
+      ],
+      "name": "CSD201-2",
+      "id": 2
     }
   ],
   "groups": [

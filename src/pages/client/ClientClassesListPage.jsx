@@ -1,5 +1,5 @@
 import { useContext, useEffect, useState } from "react";
-import { Container, Card } from "react-bootstrap";
+import { Container, Card, Nav, Form } from "react-bootstrap";
 import { Link } from "react-router-dom";
 import { faUserCircle, faIdCard, faSchool, faArrowRight } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -47,6 +47,28 @@ async function fetchClassesListByUser(user) {
   }
 }
 
+function TopNav() {
+  return (
+    <div>
+      <Nav variant="underline" defaultActiveKey="course">
+        <Nav.Item>
+          <Nav.Link eventKey="course">Courses</Nav.Link>
+        </Nav.Item>
+        <Nav.Item>
+          <Nav.Link eventKey="projects">Projects</Nav.Link>
+        </Nav.Item>
+      </Nav>
+
+      <Form.Group className="mt-4 inline-block">
+        <Form.Label>Semester</Form.Label>
+        <Form.Select>
+          <option>SUMMER2024</option>
+        </Form.Select>
+      </Form.Group>
+    </div>
+  );
+}
+
 export default function ClientClassesListPage() {
   const { user } = useContext(UserContext);
   const [classes, setClasses] = useState([]);
@@ -58,7 +80,8 @@ export default function ClientClassesListPage() {
   return (
     <>
       <Container className="mt-4">
-        <h1 className="font-bold text-3xl mb-4">Courses</h1>
+        <TopNav />
+        <h1 className="font-bold text-3xl my-4">Courses</h1>
         <div className="grid grid-cols-1 md:grid-cols-3 xl:grid-cols-5 gap-3">
           {classes.map((classroom) => (
             <Link to={`/client/classes/${classroom.id}`} key={classroom.id}>

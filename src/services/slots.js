@@ -54,3 +54,10 @@ export async function updateSlot(slotId, { slotNumber, description, questions })
 export async function deleteSlot(slotId) {
   await client.delete(`slots/${slotId}`);
 }
+
+export async function getSlotById(slotId) {
+  const response = await client.get(`slots/${slotId}`);
+  const slotModel = new Slot();
+  slotModel.fromObject(response.data);
+  return slotModel;
+}

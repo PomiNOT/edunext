@@ -13,6 +13,7 @@ import {
   faQuestion,
   faContactCard,
 } from "@fortawesome/free-solid-svg-icons";
+import { Link } from "react-router-dom";
 
 
 function SidebarButton({ icon, label, onClick }) {
@@ -61,7 +62,11 @@ function Sidebar() {
         icon={faBars}
         onClick={() => setShowSidebar(!showSidebar)}
       />
-      <SidebarButton icon={faHome} label="Home" />
+
+      <Link to="/client/classes">
+        <SidebarButton icon={faHome} label="Home" />
+      </Link>
+
       <SidebarButton icon={faClipboard} label="Assignments" />
       <SidebarButton icon={faBoxOpen} label="Upcoming Slots" />
       <SidebarButton icon={faFilePdf} label="Read user guide" />
