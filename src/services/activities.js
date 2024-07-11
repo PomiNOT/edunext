@@ -3,11 +3,12 @@ import { getAllSlots } from "./slots";
 import { getClassById } from "./classrooms";
 import { Activity } from "../models/activity";
 
-async function populateSlotWithActivities(slot, classId) {
+async function populateSlotWithActivities(slot, classId, started) {
   const response = await client.get("activitys", {
     params: {
       slotId: slot.id,
-      classId
+      classId,
+      ...(started === 'any' ? {} : { started }),
     },
   });
 
@@ -20,13 +21,17 @@ async function populateSlotWithActivities(slot, classId) {
   slot.questions = activities;
 }
 
-export async function getAllActivitiesGroupedBySlotForClass(classId) {
+export async function getAllActivitiesGroupedBySlotForClass(classId, started = 'any') {
   const classroom = await getClassById(classId);
   const slots = await getAllSlots(classroom.subjectId);
 
-  const tasks = slots.map((slot) => populateSlotWithActivities(slot, classId));
+  const tasks = slots.map((slot) => populateSlotWithActivities(slot, classId, started));
 
   await Promise.all(tasks);
+
+  if (started !== 'any') {
+    return slots.filter((slot) => slot.questions.length > 0);
+  }
 
   return slots;
 }

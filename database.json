@@ -117,15 +117,40 @@
       "slotId": 2,
       "classId": 1,
       "content": "What is recursive?",
-      "started": true,
+      "started": false,
       "id": 5
     },
     {
       "slotId": 3,
       "classId": 1,
       "content": "How many ways to resolve collisions in hashing?",
-      "started": true,
+      "started": false,
       "id": 6
+    },
+    {
+      "slotId": 4,
+      "classId": 1,
+      "content": "What the hell is that?",
+      "started": false,
+      "id": 7
+    }
+  ],
+  "comments": [
+    {
+      "userId": 3,
+      "activityId": 1,
+      "content": "nice",
+      "votes": 0,
+      "date": 1720693650,
+      "id": 1
+    },
+    {
+      "content": "that is really cool indeed",
+      "activityId": 1,
+      "userId": 6,
+      "date": 1720697525751,
+      "votes": 0,
+      "id": 2
     }
   ],
   "slots": [
@@ -157,6 +182,125 @@
         "What the hell is that?"
       ],
       "id": 4
+    },
+    {
+      "subjectId": 1,
+      "slotNumber": 4,
+      "description": "",
+      "questions": [],
+      "id": 5
+    },
+    {
+      "subjectId": 1,
+      "slotNumber": 5,
+      "description": "",
+      "questions": [],
+      "id": 6
+    },
+    {
+      "subjectId": 1,
+      "slotNumber": 6,
+      "description": "",
+      "questions": [],
+      "id": 7
+    },
+    {
+      "subjectId": 1,
+      "slotNumber": 7,
+      "description": "",
+      "questions": [],
+      "id": 8
+    },
+    {
+      "subjectId": 1,
+      "slotNumber": 8,
+      "description": "",
+      "questions": [],
+      "id": 9
+    },
+    {
+      "subjectId": 1,
+      "slotNumber": 9,
+      "description": "",
+      "questions": [],
+      "id": 10
+    },
+    {
+      "subjectId": 1,
+      "slotNumber": 10,
+      "description": "",
+      "questions": [],
+      "id": 11
+    },
+    {
+      "subjectId": 1,
+      "slotNumber": 11,
+      "description": "",
+      "questions": [],
+      "id": 12
+    },
+    {
+      "subjectId": 1,
+      "slotNumber": 12,
+      "description": "",
+      "questions": [],
+      "id": 13
+    },
+    {
+      "subjectId": 1,
+      "slotNumber": 13,
+      "description": "",
+      "questions": [],
+      "id": 14
+    },
+    {
+      "subjectId": 1,
+      "slotNumber": 14,
+      "description": "",
+      "questions": [],
+      "id": 15
+    },
+    {
+      "subjectId": 1,
+      "slotNumber": 15,
+      "description": "",
+      "questions": [],
+      "id": 16
+    },
+    {
+      "subjectId": 1,
+      "slotNumber": 16,
+      "description": "",
+      "questions": [],
+      "id": 17
+    },
+    {
+      "subjectId": 1,
+      "slotNumber": 17,
+      "description": "",
+      "questions": [],
+      "id": 18
+    },
+    {
+      "subjectId": 1,
+      "slotNumber": 18,
+      "description": "",
+      "questions": [],
+      "id": 19
+    },
+    {
+      "subjectId": 1,
+      "slotNumber": 19,
+      "description": "",
+      "questions": [],
+      "id": 20
+    },
+    {
+      "subjectId": 1,
+      "slotNumber": 20,
+      "description": "",
+      "questions": [],
+      "id": 21
     }
   ]
 }
