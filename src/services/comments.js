@@ -6,7 +6,23 @@ export async function getCommentsForActivity(activityId) {
   const response = await client.get('comments', {
     params: {
       _expand: 'user',
-      activityId
+      activityId,
+      parentId: -1
+    }
+  });
+
+  return response.data.map((comment) => {
+    const commentModel = new Comment();
+    commentModel.fromObject(comment);
+    return commentModel;
+  });
+}
+
+export async function getChildrenComments(commentId) {
+  const response = await client.get('comments', {
+    params: {
+      _expand: 'user',
+      parentId: commentId
     }
   });
 
@@ -29,12 +45,13 @@ export async function getCommentById(commentId) {
   return commentModel;
 }
 
-export async function createComment(userId, activityId, content) {
+export async function createComment(userId, activityId, content, parentId = -1) {
   const comment = new Comment();
   comment.content = content;
   comment.activityId = activityId;
   comment.date = Date.now();
   comment.userId = userId;
+  comment.parentId = parentId;
   comment.votes = 0;
 
   const response = await client.post('comments', comment.toObject());
@@ -50,4 +67,9 @@ export async function editComment(commentId, content) {
 
 export async function deleteComment(commentId) {
   await client.delete(`comments/${commentId}`);
+  const children = await getChildrenComments(commentId);
+
+  for (const child of children) {
+    await deleteComment(child.id);
+  }
 }

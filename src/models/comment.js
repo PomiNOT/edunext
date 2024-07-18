@@ -22,6 +22,11 @@ export class Comment {
   #username;
   #date;
   #votes;
+  #parentId = -1;
+
+  get parentId() {
+    return this.#parentId;
+  }
 
   get id() {
     return this.#id;
@@ -48,6 +53,17 @@ export class Comment {
 
   get votes() {
     return this.#votes;
+  }
+
+  set parentId(id) {
+    if (typeof id !== "number") {
+      this.#parentId = parseInt(id);
+      if (Number.isNaN(this.#parentId)) {
+        throw new DomainError("Parent id must be a number");
+      }
+    } else {
+      this.#parentId = id;
+    }
   }
 
   set id(id) {
@@ -123,7 +139,8 @@ export class Comment {
       activityId: this.#activityId,
       userId: this.#userId,
       date: this.#date,
-      votes: this.#votes
+      votes: this.#votes,
+      parentId: this.#parentId
     };
   }
 
@@ -135,6 +152,7 @@ export class Comment {
     this.date = obj.date;
     this.votes = obj.votes;
     this.#username = obj.user.username;
+    this.parentId = obj.parentId;
   }
 }
 

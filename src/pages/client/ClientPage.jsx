@@ -80,7 +80,7 @@ export default function ClientPage() {
   return (
     <div className="flex h-screen">
       <Sidebar />
-      <div className="flex-1 overflow-auto">
+      <div className="relative flex-1 overflow-auto">
         <Outlet />
       </div>
     </div>

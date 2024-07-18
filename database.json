@@ -7,7 +7,7 @@
       "id": 1
     },
     {
-      "username": "namdvhe123456",
+      "username": "namstudent",
       "password": "$2a$10$YzkJKqtpVf2tb8T/dmEymO6q5u0MG3YZrbWeRYqyY6ePHHI.C63CK",
       "role": "student",
       "id": 3
@@ -25,7 +25,7 @@
       "id": 5
     },
     {
-      "username": "dungdh24",
+      "username": "dungteacher",
       "password": "$2a$10$g4ID78ELt7eV16ibQ81OxOL/J7Jcj0I3TcCIXhXMDzDCfZeEHJtbm",
       "role": "teacher",
       "id": 6
@@ -71,6 +71,17 @@
       ],
       "name": "CSD201-2",
       "id": 2
+    },
+    {
+      "subjectId": 1,
+      "userId": 8,
+      "studentIds": [
+        3,
+        4,
+        5
+      ],
+      "name": "Damn Man",
+      "id": 3
     }
   ],
   "groups": [
@@ -133,26 +144,30 @@
       "content": "What the hell is that?",
       "started": false,
       "id": 7
-    }
-  ],
-  "comments": [
-    {
-      "userId": 3,
-      "activityId": 1,
-      "content": "nice",
-      "votes": 0,
-      "date": 1720693650,
-      "id": 1
     },
     {
-      "content": "that is really cool indeed",
-      "activityId": 1,
-      "userId": 6,
-      "date": 1720697525751,
-      "votes": 0,
-      "id": 2
+      "slotId": 2,
+      "classId": 1,
+      "content": "What is a priority queue?",
+      "started": false,
+      "id": 8
+    },
+    {
+      "slotId": 2,
+      "classId": 1,
+      "content": "What is recursion?",
+      "started": false,
+      "id": 9
+    },
+    {
+      "slotId": 2,
+      "classId": 1,
+      "content": "Oh wow",
+      "started": true,
+      "id": 10
     }
   ],
+  "comments": [],
   "slots": [
     {
       "subjectId": 1,
@@ -160,7 +175,8 @@
       "description": "1.3. Circularly Linked Lists\n1.4. Doubly Linked Lists",
       "questions": [
         "What is a priority queue?",
-        "What is recursion?"
+        "What is recursion?",
+        "Oh wow"
       ],
       "id": 2
     },
@@ -170,7 +186,8 @@
       "description": "3.1 Illustrative Examples\n3.1.1 The Factorial Function\n3.1.2 Binary Search\n3.1.3 File Systems",
       "questions": [
         "How many ways to resolve collisions in hashing?",
-        "What Is the difference between lossy and lossless compression?"
+        "What Is the difference between lossy and lossless compression?",
+        "Brother that is insane"
       ],
       "id": 3
     },

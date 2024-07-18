@@ -19,8 +19,10 @@ import * as slotsService from "../../services/slots";
 import * as classroomsService from "../../services/classrooms";
 import * as commentsService from "../../services/comments";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faEdit } from "@fortawesome/free-solid-svg-icons";
+import { faEdit, faL } from "@fortawesome/free-solid-svg-icons";
 import ReactPaginate from "react-paginate";
+import MDEditor from "@uiw/react-md-editor";
+import MarkdownPreview from "@uiw/react-markdown-preview/nohighlight";
 
 const ClientClassDetailContext = createContext();
 
@@ -67,6 +69,7 @@ function Wrapper({ children }) {
   async function updateComment(commentId, content) {
     const comment = await commentsService.editComment(commentId, content);
     setComments(comments.map((c) => (c.id === commentId ? comment : c)));
+    return comment;
   }
 
   useEffect(() => {
@@ -135,22 +138,43 @@ function TopContent() {
   );
 }
 
-function Comment({ comment }) {
+function Comment({ comment, onEditComment, onDeleteComment, freshReply = false }) {
   const [isEditing, setIsEditing] = useState(false);
+  const [isReplying, setIsReplying] = useState(false);
   const [editedContent, setEditedContent] = useState(comment.content);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [repliesLoadState, setRepliesLoadState] = useState('not yet');
   const { user } = useContext(UserContext);
-  const { updateComment, deleteComment } = useContext(ClientClassDetailContext);
+  const { updateComment, deleteComment, activity } = useContext(ClientClassDetailContext);
+  const [childComments, setChildComments] = useState([]);
 
   const isCurrentUser = user.id === comment.userId;
 
-  const handleEdit = () => {
-    updateComment(comment.id, editedContent);
+  const handleEditFromChild = (cmt) => {
+    setChildComments(childComments.map((c) => (c.id === cmt.id ? { ...cmt } : c)));
+  }
+
+  const handleDeleteFromChild = (id) => {
+    setChildComments(childComments.filter((c) => c.id !== id));
+  }
+
+  const handleEdit = async () => {
+    const cmt = await updateComment(comment.id, editedContent);
+
+    if (typeof onEditComment === "function") {
+      onEditComment(cmt);
+    }
+
     setIsEditing(false);
   };
 
-  const handleDelete = () => {
-    deleteComment(comment.id);
+  const handleDelete = async () => {
+    await deleteComment(comment.id);
+
+    if (typeof onDeleteComment === "function") {
+      onDeleteComment(comment.id);
+    }
+
     setShowDeleteModal(false);
   };
 
@@ -162,72 +186,146 @@ function Comment({ comment }) {
     }
   };
 
+  const handlePostReply = async (content) => {
+    const addedComment = await commentsService.createComment(user.id, activity.id, content, comment.id);
+    addedComment.freshReply = true;
+    setChildComments([addedComment, ...childComments]);
+    setIsReplying(false);
+  }
+
+  const loadReplies = async () => {
+    setRepliesLoadState('loading');
+
+    try {
+      const replies = await commentsService.getChildrenComments(comment.id);
+      setChildComments(replies);
+      setRepliesLoadState('loaded');
+    } catch (e) {
+      setRepliesLoadState('not yet');
+      throw e;
+    }
+  }
+
+  function getButton() {
+    if (freshReply) return null;
+
+    switch (repliesLoadState) {
+      case 'not yet':
+        return <Button variant="outline-secondary" className="w-full" onClick={loadReplies}>Load replies</Button>
+      case 'loading':
+        return <Button variant="outline-secondary" className="w-full" disabled>Loading...</Button>
+      case 'loaded':
+        return null;
+      default:
+        return null;
+    }
+  }
+
   return (
-    <Card className="mb-3">
-      <Card.Body>
-        <div className="flex justify-between items-start">
-          <div className="w-full">
-            <h5 className="font-bold">{comment.username}</h5>
-            <small className="text-muted">{comment.date}</small>
-            {isEditing ? (
-              <Form className="mt-2">
-                <Form.Control
-                  as="textarea"
-                  rows={5}
-                  value={editedContent}
-                  onChange={(e) => setEditedContent(e.target.value)}
-                  className="w-full mb-2"
+    <div>
+      <Card className="mb-3">
+        <Card.Body>
+          <div className="flex justify-between items-start">
+            <div className="w-full">
+              <h5 className="font-bold">{comment.username}</h5>
+              <small className="text-muted">{comment.date}</small>
+
+              {isEditing ? (
+                <EditEditor
+                  editedContent={editedContent}
+                  setEditedContent={setEditedContent}
+                  setIsEditing={setIsEditing}
+                  handleEdit={handleEdit}
                 />
-                <div className="flex justify-end">
-                  <Button variant="secondary" onClick={() => setIsEditing(false)} className="mr-2">
-                    Cancel
-                  </Button>
-                  <Button variant="primary" onClick={handleEdit}>
-                    Save
-                  </Button>
+              ) : (
+                <div className="my-3">
+                  <MarkdownPreview source={comment.content} />
                 </div>
-              </Form>
-            ) : (
-              <p className="mt-2">{comment.content}</p>
+              )}
+            </div>
+
+            {isCurrentUser && !isEditing && (
+              <div className="flex flex-col items-center ml-2">
+                <DropdownButton
+                  title={<FontAwesomeIcon icon={faEdit} />}
+                  onSelect={handleDropdownSelect}
+                >
+                  <Dropdown.Header>Actions</Dropdown.Header>
+                  <Dropdown.Item eventKey="edit">Edit</Dropdown.Item>
+                  <Dropdown.Item eventKey="delete">Delete</Dropdown.Item>
+                </DropdownButton>
+              </div>
             )}
           </div>
-          {isCurrentUser && !isEditing && (
-            <div className="flex flex-col items-center ml-2">
-              <DropdownButton
-                title={<FontAwesomeIcon icon={faEdit} />}
-                onSelect={handleDropdownSelect}
+          {!isCurrentUser && !isEditing && (
+            <div className="mt-2">
+              <button
+                className="text-blue-500"
+                onClick={() => setIsReplying(!isReplying)}
               >
-                <Dropdown.Header>Actions</Dropdown.Header>
-                <Dropdown.Item eventKey="edit">Edit</Dropdown.Item>
-                <Dropdown.Item eventKey="delete">Delete</Dropdown.Item>
-              </DropdownButton>
+                Reply
+              </button>
+              <button className="text-blue-500 ml-2">Vote</button>
             </div>
           )}
-        </div>
-        {!isEditing && (
-          <div className="mt-2">
-            <button className="text-blue-500">Reply</button>
-            <button className="text-blue-500 ml-2">Vote</button>
-          </div>
-        )}
-      </Card.Body>
+        </Card.Body>
 
-      <Modal show={showDeleteModal} onHide={() => setShowDeleteModal(false)}>
-        <Modal.Header closeButton>
-          <Modal.Title>Confirm Delete</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>Are you sure you want to delete this comment?</Modal.Body>
-        <Modal.Footer>
-          <Button variant="secondary" onClick={() => setShowDeleteModal(false)}>
-            Cancel
-          </Button>
-          <Button variant="danger" onClick={handleDelete}>
-            Delete
-          </Button>
-        </Modal.Footer>
-      </Modal>
-    </Card>
+        <EditConfirmModal
+          showDeleteModal={showDeleteModal}
+          setShowDeleteModal={setShowDeleteModal}
+          handleDelete={handleDelete}
+        />
+      </Card>
+      <div className="pl-8">
+        {isReplying && <CommentBox onAddComment={handlePostReply} />}
+        {childComments.map((comment) => (
+          <Comment
+            key={comment.id}
+            comment={comment}
+            onEditComment={handleEditFromChild}
+            onDeleteComment={handleDeleteFromChild}
+            freshReply={comment.freshReply}
+          />
+        ))}
+        <div className="mb-3">{getButton()}</div>
+      </div>
+    </div>
   );
+}
+
+function EditEditor({ editedContent, setEditedContent, setIsEditing, handleEdit }) {
+  return <Form className="mt-2">
+    <MDEditor value={editedContent} onChange={setEditedContent} />
+    <div className="flex justify-end mt-3">
+      <Button
+        variant="secondary"
+        onClick={() => setIsEditing(false)}
+        className="mr-2"
+      >
+        Cancel
+      </Button>
+      <Button variant="primary" onClick={handleEdit}>
+        Save
+      </Button>
+    </div>
+  </Form>;
+}
+
+function EditConfirmModal({ showDeleteModal, setShowDeleteModal, handleDelete }) {
+  return <Modal show={showDeleteModal} onHide={() => setShowDeleteModal(false)}>
+    <Modal.Header closeButton>
+      <Modal.Title>Confirm Delete</Modal.Title>
+    </Modal.Header>
+    <Modal.Body>Are you sure you want to delete this comment?</Modal.Body>
+    <Modal.Footer>
+      <Button variant="secondary" onClick={() => setShowDeleteModal(false)}>
+        Cancel
+      </Button>
+      <Button variant="danger" onClick={handleDelete}>
+        Delete
+      </Button>
+    </Modal.Footer>
+  </Modal>;
 }
 
 function CommentBox({ onAddComment }) {
@@ -246,13 +344,7 @@ function CommentBox({ onAddComment }) {
       <Card.Body>
         <Form onSubmit={handleSubmit}>
           <Form.Group className="mb-3">
-            <Form.Control
-              as="textarea"
-              rows={3}
-              value={content}
-              onChange={(e) => setContent(e.target.value)}
-              placeholder="Write your comment here..."
-            />
+            <MDEditor value={content} onChange={setContent} />
           </Form.Group>
           <Button variant="primary" type="submit">
             Post Comment
@@ -268,8 +360,6 @@ function MainContent() {
     ClientClassDetailContext
   );
   const [currentPage, setCurrentPage] = useState(0);
-
-  const handleVote = (id, increment) => {};
 
   const handleAddComment = (content) => {
     createComment(content);
@@ -322,9 +412,11 @@ function MainContent() {
               activeClassName={"active"}
             />
             <div className="mb-3"></div>
-            {currentComments.map((comment) => (
-              <Comment key={comment.id} comment={comment} onVote={handleVote} />
-            ))}
+            <div className="space-y-3">
+              {currentComments.map((comment) => (
+                <Comment key={comment.id} comment={comment} />
+              ))}
+            </div>
             <div className="my-5"></div>
           </div>
         </Tab>
@@ -340,7 +432,7 @@ export default function ClientClassActivityPage() {
     <Wrapper>
       <Container>
         <TopContent />
-        <div className="grid grid-cols-4 gap-3">
+        <div className="grid grid-cols-4 gap-3" data-color-mode="light">
           <div className="col-span-3">
             <MainContent />
           </div>

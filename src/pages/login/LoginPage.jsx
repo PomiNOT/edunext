@@ -21,7 +21,7 @@ function LoginForm() {
 
     const username = form.username.value;
     const password = form.password.value;
-
+    
     try {
       await login(username, password);
     } catch (err) {

@@ -6,7 +6,17 @@ export class AuthUser {
   #role;
   #password;
   #hashedPassword;
-  username;
+  #username;
+
+  get username() {
+    return this.#username;
+  }
+
+  set username(username) {
+    if (username.trim().length === 0) {
+      throw new DomainError("Username cannot be empty");
+    }
+  }
 
   get role() {
     return this.#role;
@@ -50,16 +60,16 @@ export class AuthUser {
 
   fromObject(data) {
     this.id = data.id;
-    this.username = data.username;
+    this.#username = data.username;
     this.#hashedPassword = data.password;
-    this.role = data.role;
+    this.#role = data.role;
   }
 
   toObject() {
     const hashedPassword = bcryptjs.hashSync(this.#password, 10);
 
     return {
-      username: this.username,
+      username: this.#username,
       password: hashedPassword,
       role: this.#role,
     };
