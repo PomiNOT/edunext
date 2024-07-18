@@ -7,6 +7,7 @@ export async function getCommentsForActivity(activityId) {
     params: {
       _expand: 'user',
       activityId,
+      _embed: 'votes',
       parentId: -1
     }
   });
@@ -22,6 +23,7 @@ export async function getChildrenComments(commentId) {
   const response = await client.get('comments', {
     params: {
       _expand: 'user',
+      _embed: 'votes',
       parentId: commentId
     }
   });
@@ -36,7 +38,8 @@ export async function getChildrenComments(commentId) {
 export async function getCommentById(commentId) {
   const response = await client.get(`comments/${commentId}`, {
     params: {
-      _expand: 'user'
+      _expand: 'user',
+      _embed: 'votes'
     }
   });
 
@@ -52,7 +55,6 @@ export async function createComment(userId, activityId, content, parentId = -1) 
   comment.date = Date.now();
   comment.userId = userId;
   comment.parentId = parentId;
-  comment.votes = 0;
 
   const response = await client.post('comments', comment.toObject());
   return getCommentById(response.data.id);
@@ -71,5 +73,42 @@ export async function deleteComment(commentId) {
 
   for (const child of children) {
     await deleteComment(child.id);
+  }
+}
+
+export async function getVoteForUser(commentId, userId) {
+  const response = await client.get("votes", {
+    params: { commentId, userId }
+  });
+
+  return response.data[0];
+}
+
+export async function voteComment(commentId, userId, count) {
+  const response = await client.get("votes", {
+    params: { commentId, userId },
+  });
+
+  if (response.data.length > 0) {
+    const existingVote = response.data[0];
+    const updatedVote = {
+      ...existingVote,
+      count: count,
+    };
+
+    const updateResponse = await client.put(
+      `votes/${existingVote.id}`,
+      updatedVote
+    );
+    return updateResponse.data;
+  } else {
+    const newVote = {
+      commentId,
+      userId,
+      count
+    };
+
+    const createResponse = await client.post("votes", newVote);
+    return createResponse.data;
   }
 }

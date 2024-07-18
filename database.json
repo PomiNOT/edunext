@@ -107,7 +107,7 @@
       "slotId": 2,
       "classId": 2,
       "content": "What is a priority queue?",
-      "started": false,
+      "started": true,
       "id": 2
     },
     {
@@ -165,9 +165,56 @@
       "content": "Oh wow",
       "started": true,
       "id": 10
+    },
+    {
+      "slotId": 5,
+      "classId": 1,
+      "content": "1",
+      "started": false,
+      "id": 11
+    },
+    {
+      "slotId": 2,
+      "classId": 2,
+      "content": "What is a priority queue?",
+      "started": false,
+      "id": 12
+    },
+    {
+      "slotId": 2,
+      "classId": 2,
+      "content": "What is recursion?",
+      "started": false,
+      "id": 13
     }
   ],
-  "comments": [],
+  "comments": [
+    {
+      "content": "Gaga",
+      "activityId": 4,
+      "userId": 3,
+      "date": 1721313597290,
+      "votes": 0,
+      "parentId": -1,
+      "id": 1
+    },
+    {
+      "content": "asd",
+      "activityId": 4,
+      "userId": 6,
+      "date": 1721315082326,
+      "parentId": 1,
+      "id": 2
+    }
+  ],
+  "votes": [
+    {
+      "commentId": 2,
+      "userId": 3,
+      "count": 4,
+      "id": 1
+    }
+  ],
   "slots": [
     {
       "subjectId": 1,

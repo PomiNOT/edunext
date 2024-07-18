@@ -5,3 +5,16 @@
 .question-accordion .accordion-button::after {
   align-self: flex-end;
 }
+
+.popover {
+  max-width: 500px;
+}
+
+.popover-vote label {
+  border-radius: 0;
+  border: 0;
+}
+
+.popover-vote .btn-check:checked + label {
+  background: rgb(232, 232, 232) !important;
+}

@@ -122,24 +122,12 @@ export class Comment {
     }
   }
 
-  set votes(votes) {
-    if (typeof votes !== "number") {
-      this.#votes = parseInt(votes);
-      if (Number.isNaN(this.#votes)) {
-        throw new DomainError("Comment votes must be a number");
-      }
-    } else {
-      this.#votes = votes;
-    }
-  }
-
   toObject() {
     return {
       content: this.#content,
       activityId: this.#activityId,
       userId: this.#userId,
       date: this.#date,
-      votes: this.#votes,
       parentId: this.#parentId
     };
   }
@@ -150,9 +138,9 @@ export class Comment {
     this.activityId = obj.activityId;
     this.userId = obj.userId;
     this.date = obj.date;
-    this.votes = obj.votes;
     this.#username = obj.user.username;
     this.parentId = obj.parentId;
+    this.#votes = obj.votes.reduce((acc, x) => acc + x.count, 0);
   }
 }
 

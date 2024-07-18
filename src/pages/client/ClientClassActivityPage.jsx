@@ -8,7 +8,11 @@ import {
   Button,
   DropdownButton,
   Dropdown,
-  Modal
+  Modal,
+  OverlayTrigger,
+  Popover,
+  ToggleButtonGroup,
+  ToggleButton
 } from "react-bootstrap";
 import { Link, useParams } from "react-router-dom";
 import { useState, createContext, useContext, useEffect } from "react";
@@ -19,7 +23,7 @@ import * as slotsService from "../../services/slots";
 import * as classroomsService from "../../services/classrooms";
 import * as commentsService from "../../services/comments";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faEdit, faL } from "@fortawesome/free-solid-svg-icons";
+import { faEdit, faStar } from "@fortawesome/free-solid-svg-icons";
 import ReactPaginate from "react-paginate";
 import MDEditor from "@uiw/react-md-editor";
 import MarkdownPreview from "@uiw/react-markdown-preview/nohighlight";
@@ -138,6 +142,38 @@ function TopContent() {
   );
 }
 
+function VoteComponent({ vote, onVote }) {
+  const popover = (
+    <Popover>
+      <Popover.Header>
+        <h2 className="font-bold">Vote</h2>
+      </Popover.Header>
+      <Popover.Body className="p-0 popover-vote">
+        <ToggleButtonGroup onChange={(value) => onVote(value)} type="radio" name="options" value={vote}>
+          <ToggleButton id="tg4" value={4} variant="light">
+            <FontAwesomeIcon color="red" icon={faStar} /> = 4 <FontAwesomeIcon color="orange" icon={faStar} />
+          </ToggleButton>
+          <ToggleButton id="tg3" value={3} variant="light">
+            <FontAwesomeIcon color="blue" icon={faStar} /> = 3 <FontAwesomeIcon color="orange" icon={faStar} />
+          </ToggleButton>
+          <ToggleButton id="tg2" value={2} variant="light">
+            <FontAwesomeIcon color="green" icon={faStar} /> = 2 <FontAwesomeIcon color="orange" icon={faStar} />
+          </ToggleButton>
+          <ToggleButton id="tg1" value={1} variant="light">
+            <FontAwesomeIcon color="pink" icon={faStar} /> = 1 <FontAwesomeIcon color="orange" icon={faStar} />
+          </ToggleButton>
+        </ToggleButtonGroup>
+      </Popover.Body>
+    </Popover>
+  );
+
+  return (
+    <OverlayTrigger trigger="click" placement="right" overlay={popover}>
+      <button className="text-blue-500 ml-2">Vote</button>
+    </OverlayTrigger>
+  );
+}
+
 function Comment({ comment, onEditComment, onDeleteComment, freshReply = false }) {
   const [isEditing, setIsEditing] = useState(false);
   const [isReplying, setIsReplying] = useState(false);
@@ -147,11 +183,23 @@ function Comment({ comment, onEditComment, onDeleteComment, freshReply = false }
   const { user } = useContext(UserContext);
   const { updateComment, deleteComment, activity } = useContext(ClientClassDetailContext);
   const [childComments, setChildComments] = useState([]);
+  const [currentVote, setCurrentVote] = useState(0);
+  const [myVote, setMyVote] = useState(0);
+
+  useEffect(() => {
+    async function fetchData() {
+      const { count } = await commentsService.getVoteForUser(comment.id, user.id);
+      setMyVote(count ?? 0);
+      setCurrentVote(count ?? 0);
+    }
+
+    fetchData();
+  }, []);
 
   const isCurrentUser = user.id === comment.userId;
 
   const handleEditFromChild = (cmt) => {
-    setChildComments(childComments.map((c) => (c.id === cmt.id ? { ...cmt } : c)));
+    setChildComments(childComments.map((c) => (c.id === cmt.id ? cmt : c)));
   }
 
   const handleDeleteFromChild = (id) => {
@@ -221,6 +269,11 @@ function Comment({ comment, onEditComment, onDeleteComment, freshReply = false }
     }
   }
 
+  const onVote = async (count) => {
+    await commentsService.voteComment(comment.id, user.id, count);
+    setCurrentVote(count);
+  }
+
   return (
     <div>
       <Card className="mb-3">
@@ -244,6 +297,11 @@ function Comment({ comment, onEditComment, onDeleteComment, freshReply = false }
               )}
             </div>
 
+            <div className="px-1 py-1 rounded flex items-center space-x-1 bg-gray-100">
+              <FontAwesomeIcon color="orange" icon={faStar} />
+              <p className="font-bold">{comment.votes - myVote + currentVote}</p>
+            </div>
+
             {isCurrentUser && !isEditing && (
               <div className="flex flex-col items-center ml-2">
                 <DropdownButton
@@ -265,7 +323,8 @@ function Comment({ comment, onEditComment, onDeleteComment, freshReply = false }
               >
                 Reply
               </button>
-              <button className="text-blue-500 ml-2">Vote</button>
+
+              <VoteComponent onVote={onVote} vote={currentVote} />
             </div>
           )}
         </Card.Body>
