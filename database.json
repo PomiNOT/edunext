@@ -190,26 +190,49 @@
   ],
   "comments": [
     {
-      "content": "Gaga",
-      "activityId": 4,
-      "userId": 3,
-      "date": 1721313597290,
-      "votes": 0,
-      "parentId": -1,
-      "id": 1
-    },
-    {
-      "content": "asd",
+      "content": "A **Priority Queue** is an abstract data type similar to a regular queue or stack data structure in which each element additionally has a \"priority\" associated with it. In a priority queue, an element with high priority is served before an element with low priority.\n\n### Operations\n\n- **Insert**: Adds an element to the queue with a given priority.\n- **Extract-Min/Extract-Max**: Removes and returns the element with the highest/lowest priority.\n- **Peek**: Returns the element with the highest/lowest priority without removing it from the queue.\n- **Is-Empty**: Checks if the priority queue is empty.",
       "activityId": 4,
       "userId": 6,
-      "date": 1721315082326,
-      "parentId": 1,
-      "id": 2
+      "date": 1722691986435,
+      "parentId": -1,
+      "id": 3
+    },
+    {
+      "content": "Great job! <3",
+      "activityId": 4,
+      "userId": 3,
+      "date": 1722692171001,
+      "parentId": 3,
+      "id": 4
+    },
+    {
+      "content": "Thank you for your kind response",
+      "activityId": 4,
+      "userId": 6,
+      "date": 1722692213259,
+      "parentId": 4,
+      "id": 5
+    },
+    {
+      "content": "Okay",
+      "activityId": 4,
+      "userId": 3,
+      "date": 1722692231722,
+      "parentId": 5,
+      "id": 6
+    },
+    {
+      "content": "**Wow**",
+      "activityId": 4,
+      "userId": 3,
+      "date": 1722692238063,
+      "parentId": 3,
+      "id": 7
     }
   ],
   "votes": [
     {
-      "commentId": 2,
+      "commentId": 3,
       "userId": 3,
       "count": 4,
       "id": 1
@@ -365,6 +388,13 @@
       "description": "",
       "questions": [],
       "id": 21
+    },
+    {
+      "subjectId": 1,
+      "slotNumber": 21,
+      "description": "",
+      "questions": [],
+      "id": 22
     }
   ]
 }
