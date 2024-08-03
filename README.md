@@ -17,7 +17,7 @@ Use Case diagram of main use cases:
 
 
 ## App UI designs
-
+### Student and Teachers screens
 ![](https://gh-images.bimsua.me/edunext-promo/login.png)
 ![](https://gh-images.bimsua.me/edunext-promo/courses_list.png)  
 ![](https://gh-images.bimsua.me/edunext-promo/slots_list.png)  
@@ -27,7 +27,7 @@ Use Case diagram of main use cases:
 ![](https://gh-images.bimsua.me/edunext-promo/rich_comments.png)  
 ![](https://gh-images.bimsua.me/edunext-promo/voting.png)
 ![](https://gh-images.bimsua.me/edunext-promo/comment_tree.png)  
-  
+### Admin screens
 ![](https://gh-images.bimsua.me/edunext-promo/manage_subjects.png)  
 ![](https://gh-images.bimsua.me/edunext-promo/manage_users.png)  
 ![](https://gh-images.bimsua.me/edunext-promo/manage_classes.png)  
@@ -35,3 +35,17 @@ Use Case diagram of main use cases:
 ![](https://gh-images.bimsua.me/edunext-promo/assign_students.png)  
 ![](https://gh-images.bimsua.me/edunext-promo/slot_edit_admin.png)  
 ![](https://gh-images.bimsua.me/edunext-promo/edit_slot.png)  
+
+## How to run 
+1. Clone this project
+2. Install dependencies, run ```npm install```
+3. Start json-server ```npx json-server --port 9999 --watch database.json```
+4. Start Vite ```npm start```
+
+## User Accounts
+
+| **Username**   | **Role** | **Password** |
+|----------------|----------|--------------|
+| dungteacher    | Teacher  | password     |
+| namstudent     | Student  | password     |
+| admin          | Admin    | password     |
